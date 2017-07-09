@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{95238b3f-ca7d-42da-9c56-0a67733541ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game">
+      <UniqueIdentifier>{7e3f26f7-ed28-4122-8996-24b332b2d2fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Scene">
+      <UniqueIdentifier>{85001713-d836-4cb9-a8f5-6a16b46939e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Utils">
+      <UniqueIdentifier>{84baa06a-53ef-40a2-b8f3-0f7892719ef5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Actor">
+      <UniqueIdentifier>{2d72b47a-5f75-48c7-811d-766f7a30f27f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Actor\Components">
+      <UniqueIdentifier>{6f4abad5-3d7f-4297-82fd-106afc353808}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Actor\Components\Engine">
+      <UniqueIdentifier>{9a9000e9-a9d2-40f1-96f9-d8a8bd988110}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Actor\Components\Game">
+      <UniqueIdentifier>{a37cea93-39e8-4899-a04a-72a7c34e49f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{ff8d8747-3274-444b-aae8-0598b35d721c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shader">
+      <UniqueIdentifier>{23b97fcb-a9d7-4f82-9303-0df2e7f99508}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source\Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderUtils.cpp">
+      <Filter>Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor.cpp">
+      <Filter>Source\Game\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Source\Game\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Log.cpp">
+      <Filter>Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source\Game\Actor\Components\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRenderer.cpp">
+      <Filter>Source\Game\Actor\Components\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Source\Game\Actor\Components\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRotator.cpp">
+      <Filter>Source\Game\Actor\Components\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Color.cpp">
+      <Filter>Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Gizmo.cpp">
+      <Filter>Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Source\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="CarController.cpp">
+      <Filter>Source\Game\Actor\Components\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraController.cpp">
+      <Filter>Source\Game\Actor\Components\Game</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Source\Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderUtils.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor.h">
+      <Filter>Source\Game\Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Source\Game\Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Source\Game\Actor\Components\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRenderer.h">
+      <Filter>Source\Game\Actor\Components\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Source\Game\Actor\Components\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRotator.h">
+      <Filter>Source\Game\Actor\Components\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Gizmo.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Source\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="ActorData.h">
+      <Filter>Source\Game\Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="CarController.h">
+      <Filter>Source\Game\Actor\Components\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraController.h">
+      <Filter>Source\Game\Actor\Components\Game</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Assets\Shader\default_PN.vert">
+      <Filter>Assets\Shader</Filter>
+    </None>
+    <None Include="..\Assets\Shader\default_PNT.frag">
+      <Filter>Assets\Shader</Filter>
+    </None>
+    <None Include="..\Assets\Shader\default_PNT.vert">
+      <Filter>Assets\Shader</Filter>
+    </None>
+    <None Include="..\Assets\Shader\default_PN.frag">
+      <Filter>Assets\Shader</Filter>
+    </None>
+  </ItemGroup>
+</Project>
