@@ -10,11 +10,16 @@
 #include "SimpleRotator.h"
 #include "CarController.h"
 #include "CameraController.h"
+#include "MeshDataSourceResource.h"
 
 using namespace glm;
 
 static CActor* testActor = nullptr;
 static CActor* testActor2 = nullptr;
+
+static CMeshRenderer* renderer = nullptr;
+static CMeshDataSourceResource* source1 = nullptr;
+static CMeshDataSourceResource* source2 = nullptr;
 
 /**	Constructor
 *******************************************************************************/
@@ -68,9 +73,12 @@ CScene::CScene( CGame* game ) :
 	}
 
 	CActor* mesh = m_RootActor->SpawnActor( "Mesh" );
-	CMeshRenderer* renderer = mesh->AddComponent<CMeshRenderer>( );
-	renderer->LoadMeshFromFile( "../Assets/Ship.fbx" );
-	//renderer->LoadTextureFromFile( "../Assets/Texture/sample.bmp" );
+	renderer = mesh->AddComponent<CMeshRenderer>( );
+	source1 = mesh->AddComponent<CMeshDataSourceResource>( );
+	source2 = mesh->AddComponent<CMeshDataSourceResource>( );
+	renderer->SetMeshDataSource( source1 );
+	source1->LoadResource( "../Assets/Ship.fbx" );
+	source2->LoadResource( "../Assets/UnitSphere.fbx" );
 
 	mesh->AddComponent<CCarController>( );
 
@@ -93,6 +101,11 @@ CScene::~CScene( )
 void CScene::Update( float delta )
 {
 	SUpdateData data{ delta, m_Game->GetInput( ) };
+
+	if (data.Input.KeyDown( sf::Keyboard::Space ))
+		renderer->SetMeshDataSource( source2 );
+	else
+		renderer->SetMeshDataSource( source1 );
 
 	m_RootActor->Update( data );
 }

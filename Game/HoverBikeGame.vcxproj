@@ -157,6 +157,8 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Math.h" />
+    <ClInclude Include="MeshDataSource.h" />
+    <ClInclude Include="MeshDataSourceResource.h" />
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ShaderUtils.h" />
@@ -164,6 +166,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="VertexBufferType.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
@@ -177,6 +180,8 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MeshDataSource.cpp" />
+    <ClCompile Include="MeshDataSourceResource.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ShaderUtils.cpp" />
