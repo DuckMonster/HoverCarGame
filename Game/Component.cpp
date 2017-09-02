@@ -4,8 +4,9 @@
 
 /**	Constructor
 *******************************************************************************/
-CComponent::CComponent( CActor * actor )
-	: m_Actor( actor )
+CComponent::CComponent( CActor * actor, const char* name ) :
+	m_Actor( actor ),
+	m_Name( name )
 {
 }
 
@@ -19,25 +20,25 @@ CComponent::~CComponent( )
 *******************************************************************************/
 void CComponent::OnInit( )
 {
-	Print_Log( "Component added to %s.", GetActor( )->GetName( ).c_str() );
+	Print_Log( "\"%s\" added to \"%s\".", GetName( ).c_str( ), GetActor( )->GetName( ).c_str( ) );
 }
 
 /**	On Destroy
 *******************************************************************************/
 void CComponent::OnDestroy( )
 {
-	Print_Log( "Some component destroyed." );
+	Print_Log( "Component \"%s\" destroyed.", GetName( ).c_str( ) );
 }
 
 /**	On Update
 *******************************************************************************/
-void CComponent::OnUpdate( const SUpdateData& data )
+void CComponent::OnUpdate( const SUpdateInfo& info )
 {
 }
 
 /**	On Render
 *******************************************************************************/
-void CComponent::OnRender( const SRenderData& data )
+void CComponent::OnRender( const SRenderInfo& info )
 {
 }
 
@@ -47,3 +48,4 @@ CTransform* CComponent::Transform( ) const
 {
 	return m_Actor->Transform( );
 }
+

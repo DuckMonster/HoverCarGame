@@ -2,7 +2,7 @@
 #include "Component.h"
 #include "VertexBufferType.h"
 
-struct SMeshDrawInfo
+struct SMeshDrawVertData
 {
 	GLenum DrawMode = GL_TRIANGLES;
 	size_t Count = 0;
@@ -13,13 +13,13 @@ struct SMeshDrawInfo
 class CMeshDataSource : public CComponent
 {
 public:
-	CMeshDataSource( CActor* actor ) : CComponent( actor ) {}
+	CMeshDataSource( CActor* actor ) : CComponent( actor, "Mesh Data Source" ) {}
 	void OnInit( ) override;
 	void OnDestroy( ) override;
 
 	GLuint GetVertexObject( ) const { return m_VertexObject; }
 
-	virtual void BeginRender( class CMeshRenderer* renderer, SMeshDrawInfo& outInfo );
+	virtual void BeginRender( class CMeshRenderer* renderer, SMeshDrawVertData& outInfo );
 	virtual void EndRender( class CMeshRenderer* renderer );
 
 private:

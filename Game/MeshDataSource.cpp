@@ -21,10 +21,10 @@ void CMeshDataSource::OnDestroy( )
 
 /**	Begin Render
 *******************************************************************************/
-void CMeshDataSource::BeginRender( CMeshRenderer * renderer, SMeshDrawInfo& outInfo )
+void CMeshDataSource::BeginRender( CMeshRenderer * renderer, SMeshDrawVertData& outInfo )
 {
 	glBindVertexArray( m_VertexObject );
-	outInfo = SMeshDrawInfo( );
+	outInfo = SMeshDrawVertData( );
 }
 
 /**	End Render

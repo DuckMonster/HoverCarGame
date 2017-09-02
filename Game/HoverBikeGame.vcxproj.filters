@@ -34,6 +34,12 @@
     <Filter Include="Source\Game\Actor\Components\Engine\Rendering">
       <UniqueIdentifier>{190f3644-fd64-4fb8-971f-b600557869f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Game\Rendering">
+      <UniqueIdentifier>{9f0e7bde-b072-47a9-bc4c-14311f1ac069}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shader\Deferred">
+      <UniqueIdentifier>{b3d66d8c-a0e4-43a5-8579-b2f0331bdcc3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -50,9 +56,6 @@
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Source\Game\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="ShaderUtils.cpp">
-      <Filter>Source\Utils</Filter>
     </ClCompile>
     <ClCompile Include="Actor.cpp">
       <Filter>Source\Game\Actor</Filter>
@@ -72,9 +75,6 @@
     <ClCompile Include="Transform.cpp">
       <Filter>Source\Game\Actor\Components\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleRotator.cpp">
-      <Filter>Source\Game\Actor\Components\Game</Filter>
-    </ClCompile>
     <ClCompile Include="Color.cpp">
       <Filter>Source\Utils</Filter>
     </ClCompile>
@@ -84,12 +84,6 @@
     <ClCompile Include="Input.cpp">
       <Filter>Source\Game</Filter>
     </ClCompile>
-    <ClCompile Include="CarController.cpp">
-      <Filter>Source\Game\Actor\Components\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="CameraController.cpp">
-      <Filter>Source\Game\Actor\Components\Game</Filter>
-    </ClCompile>
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>Source\Game\Actor\Components\Engine\Rendering</Filter>
     </ClCompile>
@@ -98,6 +92,27 @@
     </ClCompile>
     <ClCompile Include="MeshDataSourceResource.cpp">
       <Filter>Source\Game\Actor\Components\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshDataSourceCustom.cpp">
+      <Filter>Source\Game\Actor\Components\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Source\Game\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="File.cpp">
+      <Filter>Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Forward.cpp">
+      <Filter>Source\Game\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Deferred.cpp">
+      <Filter>Source\Game\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="GLUtils.cpp">
+      <Filter>Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionalLight.cpp">
+      <Filter>Source\Game\Actor\Components\Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -109,9 +124,6 @@
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Source\Game\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderUtils.h">
-      <Filter>Source\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Actor.h">
       <Filter>Source\Game\Actor</Filter>
@@ -131,9 +143,6 @@
     <ClInclude Include="Transform.h">
       <Filter>Source\Game\Actor\Components\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleRotator.h">
-      <Filter>Source\Game\Actor\Components\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Gizmo.h">
       <Filter>Source\Utils</Filter>
     </ClInclude>
@@ -149,12 +158,6 @@
     <ClInclude Include="ActorData.h">
       <Filter>Source\Game\Actor</Filter>
     </ClInclude>
-    <ClInclude Include="CarController.h">
-      <Filter>Source\Game\Actor\Components\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="CameraController.h">
-      <Filter>Source\Game\Actor\Components\Game</Filter>
-    </ClInclude>
     <ClInclude Include="MeshRenderer.h">
       <Filter>Source\Game\Actor\Components\Engine\Rendering</Filter>
     </ClInclude>
@@ -166,6 +169,24 @@
     </ClInclude>
     <ClInclude Include="MeshDataSourceResource.h">
       <Filter>Source\Game\Actor\Components\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshDataSourceCustom.h">
+      <Filter>Source\Game\Actor\Components\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Source\Game\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="File.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Deferred.h">
+      <Filter>Source\Game\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="GLUtils.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionalLight.h">
+      <Filter>Source\Game\Actor\Components\Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -180,6 +201,57 @@
     </None>
     <None Include="..\Assets\Shader\default_PN.frag">
       <Filter>Assets\Shader</Filter>
+    </None>
+    <None Include="..\Assets\Shader\copy_PN.frag">
+      <Filter>Assets\Shader</Filter>
+    </None>
+    <None Include="..\Assets\Shader\copy_PN.vert">
+      <Filter>Assets\Shader</Filter>
+    </None>
+    <None Include="..\Assets\Shader\infinite_floor.frag">
+      <Filter>Assets\Shader</Filter>
+    </None>
+    <None Include="..\Assets\Shader\infinite_floor.vert">
+      <Filter>Assets\Shader</Filter>
+    </None>
+    <None Include="..\Assets\Shader\depth.frag">
+      <Filter>Assets\Shader</Filter>
+    </None>
+    <None Include="..\Assets\Shader\depth.vert">
+      <Filter>Assets\Shader</Filter>
+    </None>
+    <None Include="Forward.h">
+      <Filter>Source\Game\Rendering</Filter>
+    </None>
+    <None Include="..\Assets\Shader\motion_blur.frag">
+      <Filter>Assets\Shader</Filter>
+    </None>
+    <None Include="..\Assets\Shader\motion_blur.vert">
+      <Filter>Assets\Shader</Filter>
+    </None>
+    <None Include="..\Assets\Shader\Deferred\D_default.vert">
+      <Filter>Assets\Shader\Deferred</Filter>
+    </None>
+    <None Include="..\Assets\Shader\Deferred\D_default.frag">
+      <Filter>Assets\Shader\Deferred</Filter>
+    </None>
+    <None Include="..\Assets\Shader\Deferred\D_infinite_floor.frag">
+      <Filter>Assets\Shader\Deferred</Filter>
+    </None>
+    <None Include="..\Assets\Shader\Deferred\D_infinite_floor.vert">
+      <Filter>Assets\Shader\Deferred</Filter>
+    </None>
+    <None Include="..\Assets\Shader\Deferred\D_lightpass.frag">
+      <Filter>Assets\Shader\Deferred</Filter>
+    </None>
+    <None Include="..\Assets\Shader\Deferred\D_lightpass.vert">
+      <Filter>Assets\Shader\Deferred</Filter>
+    </None>
+    <None Include="..\Assets\Shader\Deferred\D_shadowpass.frag">
+      <Filter>Assets\Shader\Deferred</Filter>
+    </None>
+    <None Include="..\Assets\Shader\Deferred\D_shadowpass.vert">
+      <Filter>Assets\Shader\Deferred</Filter>
     </None>
   </ItemGroup>
 </Project>

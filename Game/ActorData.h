@@ -1,14 +1,18 @@
 #pragma once
 #include "Input.h"
 
-struct SUpdateData
+struct SUpdateInfo
 {
-	float Delta;
-	const CInput& Input;
+	float Delta = 0.f;
+	const Input::CInput& Input;
 };
 
-struct SRenderData
+struct SRenderInfo
 {
-	float Delta;
-	const glm::mat4& CameraMatrix;
+	glm::mat4 CameraMatrix;
+	GLuint ShaderOverride = -1;
+	bool UseShaderOverride = false;
+	bool DebugDraw = false;
 };
+
+typedef void( *ActorScript )(class CActor* actor, const SUpdateInfo& info);

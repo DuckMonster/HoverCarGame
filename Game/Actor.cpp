@@ -21,7 +21,7 @@ CActor::CActor( CScene* scene ) :
 *******************************************************************************/
 void CActor::Init( )
 {
-	Print_Log( "%s created!", m_Name.c_str( ) );
+	Print_Log( "\"%s\" created!", m_Name.c_str( ) );
 }
 
 /**	Destroy
@@ -48,41 +48,50 @@ void CActor::Destroy( )
 
 /**	Update
 *******************************************************************************/
-void CActor::Update( const SUpdateData& data )
+void CActor::Update( const SUpdateInfo& data )
 {
+	// Scripts
+	for (size_t i = 0; i < m_Scripts.size(); i++)
+		m_Scripts[i]( this, data );
+
+	// Components
 	for (size_t i = 0; i < m_Components.size( ); i++)
 		m_Components[i]->OnUpdate( data );
 
+	// Children
 	for (size_t i = 0; i < NumChildren( ); i++)
 		GetChild( i )->Update( data );
 }
 
 /**	Render
 *******************************************************************************/
-void CActor::Render( const SRenderData& data )
+void CActor::Render( const SRenderInfo& info )
 {
 	for (size_t i = 0; i < m_Components.size( ); i++)
-		m_Components[i]->OnRender( data );
+		m_Components[i]->OnRender( info );
 
 	for (size_t i = 0; i < NumChildren( ); i++)
-		GetChild( i )->Render( data);
+		GetChild( i )->Render( info);
 
-	// Render Transform
-	glm::vec3 position = Transform( )->GetPosition( ),
-		forward = Transform( )->GetForward( ),
-		right = Transform( )->GetRight( ),
-		up = Transform( )->GetUp( );
-
-	CGizmo::DrawLine( position, position + forward, CColor::Red, 2.f, data.CameraMatrix );
-	CGizmo::DrawLine( position, position + up, CColor::Green, 2.f, data.CameraMatrix );
-	CGizmo::DrawLine( position, position + right, CColor::Blue, 2.f, data.CameraMatrix );
-
-	for (size_t i = 0; i < NumChildren( ); i++)
+	//--------------------------------------------------- Debug Draw
+	if (info.DebugDraw)
 	{
-		CGizmo::DrawLine( position, GetChild( i )->Transform( )->GetPosition( ),
-			CColor::White, 1.f, 
-			data.CameraMatrix
-		);
+		glm::vec3 position = Transform( )->GetPosition( ),
+			forward = Transform( )->GetForward( ),
+			right = Transform( )->GetRight( ),
+			up = Transform( )->GetUp( );
+
+		CGizmo::DrawLine( position, position + forward, CColor::Red, 2.f, info.CameraMatrix );
+		CGizmo::DrawLine( position, position + up, CColor::Green, 2.f, info.CameraMatrix );
+		CGizmo::DrawLine( position, position + right, CColor::Blue, 2.f, info.CameraMatrix );
+
+		for (size_t i = 0; i < NumChildren( ); i++)
+		{
+			CGizmo::DrawLine( position, GetChild( i )->Transform( )->GetPosition( ),
+				CColor::White, 1.f,
+				info.CameraMatrix
+			);
+		}
 	}
 }
 

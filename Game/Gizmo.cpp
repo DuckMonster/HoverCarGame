@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Gizmo.h"
-#include "ShaderUtils.h"
+#include "GLUtils.h"
 
 using namespace glm;
 
@@ -13,6 +13,7 @@ uniform mat4 u_Matrix;\
 const float lineVerts[] = float[] ( 0.0, 1.0 );\
 void main() {\
 	gl_Position = u_Matrix * vec4(lineVerts[gl_VertexID], 0.0, 0.0, 1.0);\
+	gl_Position.z = -1.0;\
 }";
 	const char* LINE_FRAG_SRC = "\
 #version 330 core\n\
@@ -28,7 +29,7 @@ void main() {\
 void CGizmo::InitGizmos( )
 {
 	// Line shader
-	lineShader = ShaderUtils::CreateShaderSrc( LINE_VERT_SRC, LINE_FRAG_SRC );
+	lineShader = GLUtils::CreateShaderSrc( LINE_VERT_SRC, LINE_FRAG_SRC );
 }
 
 void CGizmo::DestroyGizmos( )

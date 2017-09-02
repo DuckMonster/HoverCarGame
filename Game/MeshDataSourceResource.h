@@ -12,7 +12,7 @@ public:
 
 	GLuint GetBuffer( EVertexBufferType type ) const { return m_DataBuffers[(int)type]; }
 
-	void BeginRender( class CMeshRenderer* renderer, SMeshDrawInfo& outInfo ) override;
+	void BeginRender( class CMeshRenderer* renderer, SMeshDrawVertData& outInfo ) override;
 
 private:
 	size_t	m_DrawCount;

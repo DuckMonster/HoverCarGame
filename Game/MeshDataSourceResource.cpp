@@ -135,7 +135,7 @@ void CMeshDataSourceResource::LoadResource( const char* path )
 
 /**	Begin Render
 *******************************************************************************/
-void CMeshDataSourceResource::BeginRender( CMeshRenderer* renderer, SMeshDrawInfo& outInfo )
+void CMeshDataSourceResource::BeginRender( CMeshRenderer* renderer, SMeshDrawVertData& outInfo )
 {
 	CMeshDataSource::BeginRender(renderer, outInfo);
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, GetBuffer( EVertexBufferType::Element ) );

@@ -7,7 +7,7 @@ using namespace glm;
 
 /**	Constructor
 *******************************************************************************/
-CCamera::CCamera( CActor * actor ) : CComponent( actor )
+CCamera::CCamera( CActor * actor ) : CComponent( actor, "Camera" )
 {
 }
 
@@ -15,7 +15,7 @@ CCamera::CCamera( CActor * actor ) : CComponent( actor )
 *******************************************************************************/
 const glm::mat4& CCamera::GetMatrix( )
 {
-	if (m_Projection)
+	if (m_Perspective)
 		m_ProjectionMatrix = perspective<float>( radians( m_FieldOfView ), m_Aspect, m_Near, m_Far );
 	else
 		m_ProjectionMatrix = ortho<float>( -m_OrthoHeight * m_Aspect, m_OrthoHeight * m_Aspect, -m_OrthoHeight, m_OrthoHeight, m_Near, m_Far );

@@ -9,19 +9,15 @@ public:
 
 	void OnInit( ) override;
 	void OnDestroy( ) override;
-	void OnRender( const SRenderData& data ) override;
+	void OnRender( const SRenderInfo& info ) override;
 
 	void SetMeshDataSource( class CMeshDataSource* source ) { m_DataSource = source; }
 	CMeshDataSource* GetMeshDataSource( ) const { return m_DataSource; }
 
-	void LoadTextureFromFile( const char* path );
+	void SetMaterial( class CMaterial* material ) { m_Material = material; }
+	CMaterial* GetMaterial( ) const { return m_Material; }
 
 private:
-	GLuint	m_Shader_PN = -1;
-	GLuint	m_Shader_PNT = -1;
-
-	GLuint	m_Texture = -1;
-	bool	m_UseTexture = false;
-
-	class CMeshDataSource* m_DataSource = nullptr;
+	class CMeshDataSource*	m_DataSource = nullptr;
+	class CMaterial*		m_Material = nullptr;
 };

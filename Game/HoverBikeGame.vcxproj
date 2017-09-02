@@ -148,21 +148,23 @@
     <ClInclude Include="Actor.h" />
     <ClInclude Include="ActorData.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="CameraController.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="Deferred.h" />
+    <ClInclude Include="DirectionalLight.h" />
+    <ClInclude Include="File.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Gizmo.h" />
-    <ClInclude Include="CarController.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Log.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="MeshDataSource.h" />
+    <ClInclude Include="MeshDataSourceCustom.h" />
     <ClInclude Include="MeshDataSourceResource.h" />
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="ShaderUtils.h" />
-    <ClInclude Include="SimpleRotator.h" />
+    <ClInclude Include="GLUtils.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Transform.h" />
@@ -171,21 +173,24 @@
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="Deferred.cpp" />
+    <ClCompile Include="DirectionalLight.cpp" />
+    <ClCompile Include="File.cpp" />
+    <ClCompile Include="Forward.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gizmo.cpp" />
-    <ClCompile Include="CarController.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="MeshDataSource.cpp" />
+    <ClCompile Include="MeshDataSourceCustom.cpp" />
     <ClCompile Include="MeshDataSourceResource.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="ShaderUtils.cpp" />
-    <ClCompile Include="SimpleRotator.cpp" />
+    <ClCompile Include="GLUtils.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -196,10 +201,27 @@
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Assets\Shader\copy_PN.frag" />
+    <None Include="..\Assets\Shader\copy_PN.vert" />
     <None Include="..\Assets\Shader\default_PN.frag" />
     <None Include="..\Assets\Shader\default_PN.vert" />
     <None Include="..\Assets\Shader\default_PNT.frag" />
     <None Include="..\Assets\Shader\default_PNT.vert" />
+    <None Include="..\Assets\Shader\Deferred\D_default.frag" />
+    <None Include="..\Assets\Shader\Deferred\D_default.vert" />
+    <None Include="..\Assets\Shader\Deferred\D_infinite_floor.frag" />
+    <None Include="..\Assets\Shader\Deferred\D_infinite_floor.vert" />
+    <None Include="..\Assets\Shader\Deferred\D_lightpass.frag" />
+    <None Include="..\Assets\Shader\Deferred\D_lightpass.vert" />
+    <None Include="..\Assets\Shader\Deferred\D_shadowpass.frag" />
+    <None Include="..\Assets\Shader\Deferred\D_shadowpass.vert" />
+    <None Include="..\Assets\Shader\depth.frag" />
+    <None Include="..\Assets\Shader\depth.vert" />
+    <None Include="..\Assets\Shader\infinite_floor.frag" />
+    <None Include="..\Assets\Shader\infinite_floor.vert" />
+    <None Include="..\Assets\Shader\motion_blur.frag" />
+    <None Include="..\Assets\Shader\motion_blur.vert" />
+    <None Include="Forward.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

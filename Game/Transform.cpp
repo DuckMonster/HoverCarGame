@@ -68,8 +68,6 @@ void CTransform::SetRotation( const glm::quat& rotation )
 	if (GetParent( ))
 		localRotation = inverse( GetParent( )->GetRotation( ) ) * localRotation;
 
-	mat4 test = (mat4)localRotation;
-
 	SetLocalRotation( localRotation );
 }
 
@@ -86,9 +84,6 @@ void CTransform::LookAt( const glm::vec3& point, const glm::vec3& up )
 	target[0] = vec4( vecforward, 0.f );
 	target[1] = vec4( vecup, 0.f );
 	target[2] = vec4( vecright, 0.f );
-
-	quat q( target );
-	mat4 test( (mat4)q );
 
 	SetRotation( quat( target ) );
 }
@@ -160,24 +155,20 @@ void CTransform::Clean( )
 		{
 			m_Matrix = GetParent( )->GetMatrix( ) * m_LocalMatrix;
 			m_InvMatrix = inverse( m_Matrix );
+
+			m_WorldPosition = (vec3)m_Matrix[3];
+			m_WorldRotation = GetParent( )->GetRotation( ) * m_Rotation;
+			m_WorldScale = GetParent( )->GetScale( ) * m_Scale;
 		}
 		else
 		{
 			m_Matrix = m_LocalMatrix;
 			m_InvMatrix = m_InvLocalMatrix;
+
+			m_WorldPosition = m_Position;
+			m_WorldScale = m_Scale;
+			m_WorldRotation = m_Rotation;
 		}
-
-		// Decompose to position, scale, rotation
-		vec3 skew;
-		vec4 perspective;
-
-		vec3 position, scale;
-		quat rotation;
-
-		glm::decompose( m_Matrix, scale, rotation, position, skew, perspective );
-		m_WorldPosition = position;
-		m_WorldScale = scale;
-		m_WorldRotation = rotation;
 
 		sm_WorldUpdates++;
 	}

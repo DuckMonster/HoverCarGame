@@ -25,7 +25,36 @@ CGame::~CGame( )
 *******************************************************************************/
 void CGame::KeyEvent( sf::Keyboard::Key key, bool state )
 {
-	m_CurrentInput.Set( key, state );
+	m_CurrentInput.SetKey( key, state );
+}
+
+/**	Button Event
+*******************************************************************************/
+void CGame::ButtonEvent( int index, int button, bool state )
+{
+	m_CurrentInput.SetButton( index - 1, button, state );
+}
+
+/**	Axis Event
+*******************************************************************************/
+void CGame::AxisEvent( int index, sf::Joystick::Axis axis, float value )
+{
+	if (abs( value ) < 0.15f)
+		value = 0.f;
+
+	m_CurrentInput.SetAxis( index - 1, axis, value );
+}
+
+/** Mouse Move Event
+*******************************************************************************/
+void CGame::MouseMoveEvent( int x, int y )
+{
+}
+
+/**	Mouse Button Event
+*******************************************************************************/
+void CGame::MouseButtonEvent( int button )
+{
 }
 
 /**	On Viewport Change
@@ -58,13 +87,13 @@ void CGame::OnFrame( )
 	float delta = nowPoint - m_PrevFrameTime;
 	m_PrevFrameTime = nowPoint;
 
-	if (delta > 0.8f)
+	if (delta > 0.1f)
 		delta = 0.f;
 
 	//--------------------------------------------------- Do Frame
 	BeginFrame( delta );
 	UpdateFrame( delta );
-	RenderFrame( delta );
+	RenderFrame( );
 	EndFrame( delta );
 }
 
@@ -83,13 +112,17 @@ void CGame::UpdateFrame( float delta )
 
 /**	Render Frame
 *******************************************************************************/
-void CGame::RenderFrame( float delta )
+void CGame::RenderFrame( )
 {
+	//m_Deferred.RenderScene( m_Scene );
+
 	glClearColor( 0.05f, 0.05f, 0.05f, 1.f );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	glEnable( GL_DEPTH_TEST );
 
-	m_Scene->Render( delta );
+	m_Deferred.RenderScene( m_Scene );
+	//m_Forward.Render( m_Scene, 0.f );
+	//m_Scene->Render( delta );
 }
 
 /**	End Frame

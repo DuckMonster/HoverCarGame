@@ -3,23 +3,31 @@
 #include "Game.h"
 #include "Actor.h"
 #include "Component.h"
-#include "ShaderUtils.h"
+#include "GLUtils.h"
 #include "Camera.h"
 #include "Transform.h"
 #include "MeshRenderer.h"
-#include "SimpleRotator.h"
-#include "CarController.h"
-#include "CameraController.h"
 #include "MeshDataSourceResource.h"
+#include "MeshDataSourceCustom.h"
+#include "Material.h"
+#include "File.h"
+#include "DirectionalLight.h"
 
+using namespace std;
 using namespace glm;
 
-static CActor* testActor = nullptr;
-static CActor* testActor2 = nullptr;
+namespace
+{
+	CActor* cube = nullptr;
+	CActor* infiniFloor = nullptr;
 
-static CMeshRenderer* renderer = nullptr;
-static CMeshDataSourceResource* source1 = nullptr;
-static CMeshDataSourceResource* source2 = nullptr;
+	CMeshRenderer* renderer = nullptr;
+	CMeshDataSourceResource* source1 = nullptr;
+	CMeshDataSourceResource* source2 = nullptr;
+
+	CMaterial* material = nullptr;
+	CMaterial* floorMaterial = nullptr;
+}
 
 /**	Constructor
 *******************************************************************************/
@@ -27,67 +35,127 @@ CScene::CScene( CGame* game ) :
 	m_Game( game ),
 	m_RootActor( nullptr )
 {
+	material = new CMaterial( );
+	material->LoadFromFile( "../Assets/Shader/Deferred/D_default" );
+	floorMaterial = new CMaterial( );
+	floorMaterial->LoadFromFile( "../Assets/Shader/Deferred/D_infinite_floor" );
+
 	m_RootActor = new CActor( this );
 	m_RootActor->SetName( "ROOT" );
 	m_RootActor->Init( );
 
-	float deg, rad;
-	deg = 180.f;
-	rad = Math::Deg2Rad * deg;
-
-	Print_Log( "%f deg = %f rad (%f)", deg, rad, pi<float>( ) );
-	deg = 90.f;
-	rad = Math::Deg2Rad * deg;
-	Print_Log( "%f deg = %f rad (%f)", deg, rad, pi<float>( ) / 2.f );
-	deg = 270.f;
-	rad = Math::Deg2Rad * deg;
-	Print_Log( "%f deg = %f rad (%f)", deg, rad, pi<float>( ) * 1.5f );
-	deg = 360.f;
-	rad = Math::Deg2Rad * deg;
-	Print_Log( "%f deg = %f rad (%f)", deg, rad, pi<float>( ) * 2.f );
-
-	for (size_t i = 0; i < 1; i++)
 	{
-		CActor* newActor = m_RootActor->SpawnActor( "MyActor", m_RootActor );
+		cube = m_RootActor->SpawnActor( "Cube" );
 
-		Print_Log( "Component num: %d", newActor->GetComponentCount( ) );
+		renderer = cube->AddComponent<CMeshRenderer>( );
+		source1 = cube->AddComponent<CMeshDataSourceResource>( );
 
-		newActor->AddComponent<CComponent>( );
-		Print_Log( "Component num: %d", newActor->GetComponentCount( ) );
-		newActor->RemoveComponent<CComponent>( );
+		renderer->SetMaterial( material );
+		renderer->SetMeshDataSource( source1 );
+		source1->LoadResource( "../Assets/UnitCube.fbx" );
 
-		Print_Log( "Component num: %d", newActor->GetComponentCount( ) );
+		cube->AttachScript( []( CActor* actor, const SUpdateInfo& info )
+		{
+			float angle = -18.235f * info.Delta;
+			float yPos = sin( CTime::TotalElapsed( ) * 0.8f ) * 0.6f;
 
-		CComponent* comp = newActor->AddComponent<CComponent>( );
-		Print_Log( "Component num: %d", newActor->GetComponentCount( ) );
-		newActor->RemoveComponent( comp );
-
-		Print_Log( "Component num: %d", newActor->GetComponentCount( ) );
-
-		newActor->AddComponent<CComponent>( );
-		newActor->AddComponent<CComponent>( );
-		newActor->AddComponent<CComponent>( );
-
-		newActor->Destroy( );
-		delete newActor;
+			actor->Transform( )->AddRotationEuler( vec3( 0.f, angle, 0.f ) );
+			actor->Transform( )->SetLocalPosition( vec3( 0.f, 1.5f + yPos, 0.f ) );
+		} );
 	}
 
-	CActor* mesh = m_RootActor->SpawnActor( "Mesh" );
-	renderer = mesh->AddComponent<CMeshRenderer>( );
-	source1 = mesh->AddComponent<CMeshDataSourceResource>( );
-	source2 = mesh->AddComponent<CMeshDataSourceResource>( );
-	renderer->SetMeshDataSource( source1 );
-	source1->LoadResource( "../Assets/Ship.fbx" );
-	source2->LoadResource( "../Assets/UnitSphere.fbx" );
+	{
+		CActor* cube2 = m_RootActor->SpawnActor( "Bouncy Cube" );
+		cube2->Transform( )->SetLocalPosition( vec3( 1.5f, 4.f, 0.f ) );
 
-	mesh->AddComponent<CCarController>( );
+		CMeshRenderer* rend = cube2->AddComponent<CMeshRenderer>( );
+		CMeshDataSourceResource* src = cube2->AddComponent<CMeshDataSourceResource>( );
 
-	CActor* camera = m_RootActor->SpawnActor( "My Camera" );
-	camera->AddComponent<CCamera>( )->SetProjection( false );
-	camera->AddComponent<CCameraController>( )->m_Target = mesh->Transform( );
+		rend->SetMaterial( material );
+		rend->SetMeshDataSource( src );
+		src->LoadResource( "../Assets/UnitSphere.fbx" );
 
-	camera->Transform( )->SetLocalPosition( vec3( 1.f, 1.f, 1.f ) * 5.f );
-	camera->Transform( )->LookAt( vec3( 0.f ) );
+		cube2->AttachScript( []( CActor* actor, const SUpdateInfo& info )
+		{
+			static float velo = 0.f;
+			static const float GRAV = -8.f;
+
+			static float jump_timer = 0.f;
+
+			jump_timer += info.Delta;
+			if (jump_timer > 5.f)
+			{
+				velo = 5.f;
+				jump_timer = 0.f;
+			}
+
+			float yPos = actor->Transform( )->GetLocalPosition( ).y - 0.5f;
+
+			velo += GRAV * info.Delta;
+			if (yPos + velo * info.Delta < 0.f)
+				velo *= -0.6f;
+
+			yPos += velo * info.Delta;
+
+			vec3 newPos = actor->Transform( )->GetLocalPosition( );
+			newPos.y = yPos + 0.5f;
+
+			actor->Transform( )->SetLocalPosition( newPos );
+		} );
+	}
+
+	infiniFloor = m_RootActor->SpawnActor( "Infinite Floor" );
+	{
+		CMeshRenderer* renderer = infiniFloor->AddComponent<CMeshRenderer>( );
+		CMeshDataSourceCustom* source = infiniFloor->AddComponent<CMeshDataSourceCustom>( );
+
+		renderer->SetMeshDataSource( source );
+		renderer->SetMaterial( floorMaterial );
+		source->SetDrawCount( 4 );
+
+		float positions[] ={
+			-1.f, 0.f, -1.f,
+			1.f, 0.f, -1.f,
+			1.f, 0.f, 1.f,
+			-1.f, 0.f, 1.f
+		};
+
+		GLuint pos = source->AddBuffer( 0, GL_FLOAT, 3, 0, 0 );
+
+		glBindBuffer( GL_ARRAY_BUFFER, pos );
+		glBufferData( GL_ARRAY_BUFFER, sizeof( positions ), positions, GL_STATIC_DRAW );
+
+		source->SetDrawMode( GL_QUADS );
+	}
+
+	infiniFloor->AttachScript( []( CActor* actor, const SUpdateInfo& info )
+	{
+		vec3 cubePosition = cube->Transform( )->GetPosition( );
+		actor->Transform( )->SetPosition( vec3( cubePosition.x, 0.f, cubePosition.z ) );
+	} );
+
+	// Setup camera
+	CActor* cameraRoot = m_RootActor->SpawnActor( "Camera Root" );
+	CActor* camera = cameraRoot->SpawnActor( "My Camera" );
+	camera->AddComponent<CCamera>( );
+
+	camera->Transform( )->SetLocalPosition( vec3( -5.f, 1.f, 5.f ) );
+	camera->Transform( )->LookAt( vec3( ) );
+
+	cameraRoot->AttachScript( []( CActor* actor, const SUpdateInfo& info )
+	{
+		float angle = 12.f * info.Delta;
+		actor->Transform( )->AddRotationEuler( vec3( 0.f, angle, 0.f ) );
+	} );
+
+	// Setup light
+	CActor* light = m_RootActor->SpawnActor( "Directional Light" );
+	light->AddComponent<CDirectionalLight>( );
+
+	light->Transform( )->SetLocalPosition( vec3( 9.f, 7.f, 5.f ) );
+	light->Transform( )->LookAt( vec3( ) );
+
+	PrintScene( );
 }
 
 /**	Destructor
@@ -100,22 +168,14 @@ CScene::~CScene( )
 *******************************************************************************/
 void CScene::Update( float delta )
 {
-	SUpdateData data{ delta, m_Game->GetInput( ) };
-
-	if (data.Input.KeyDown( sf::Keyboard::Space ))
-		renderer->SetMeshDataSource( source2 );
-	else
-		renderer->SetMeshDataSource( source1 );
-
+	SUpdateInfo data{ delta, m_Game->GetInput( ) };
 	m_RootActor->Update( data );
 }
 
-/**	Render
+/**	Get Active Camera
 *******************************************************************************/
-void CScene::Render( float delta )
+CCamera* CScene::GetActiveCamera( )
 {
-	using namespace glm;
-
 	// Find active camera
 	if (!m_ActiveCamera)
 	{
@@ -130,11 +190,55 @@ void CScene::Render( float delta )
 		}
 	}
 
-	ivec2 screenSize = m_Game->GetViewport( );
-	float aspect = (float)screenSize.x / screenSize.y;
-	m_ActiveCamera->SetAspect( aspect );
+	return m_ActiveCamera;
+}
 
-	SRenderData data{ delta, m_ActiveCamera->GetMatrix( ) };
+/**	Print Scene
+*******************************************************************************/
+void CScene::PrintScene( )
+{
+	string sceneString;
 
-	m_RootActor->Render( data );
+	sceneString += "\n-- SCENE --\n";
+	GetActorString( m_RootActor, 1, sceneString );
+
+	Print_Log( "%s", sceneString.c_str( ) );
+}
+
+/**	Get Actor String
+*******************************************************************************/
+void CScene::GetActorString( CActor* actor, int indent, string& outString )
+{
+	struct
+	{
+		void IndentString( string& str, int indent, bool mark = false )
+		{
+			for (int i=0; i < indent; i++)
+			{
+				if (mark && i == indent - 1)
+					str += "-  ";
+				else
+					str += "   ";
+			}
+		}
+	} func;
+
+	func.IndentString( outString, indent, true );
+	outString += actor->GetName( ) + '\n';
+	for (size_t i = 0; i < actor->NumComponents( ); i++)
+	{
+		CComponent* comp = actor->GetComponent( i );
+		func.IndentString( outString, indent, false );
+
+		outString += comp->GetName( ) + '\n';
+	}
+
+	if (actor->NumScripts( ) > 0)
+	{
+		func.IndentString( outString, indent, false );
+		outString += "( " + to_string( actor->NumScripts( ) ) + " ) scripts\n";
+	}
+
+	for (size_t i = 0; i < actor->NumChildren( ); i++)
+		GetActorString( actor->GetChild( i ), indent + 1, outString );
 }

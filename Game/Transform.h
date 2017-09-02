@@ -41,7 +41,7 @@ public:
 
 	void AddPosition( const glm::vec3& delta ) { SetPosition( GetPosition( ) + delta ); }
 	void AddScale( const glm::vec3& delta ) { SetScale( GetScale( ) + delta ); }
-	void AddRotation( const glm::quat& delta ) { SetRotation( GetRotation( ) * delta ); }
+	void AddRotation( const glm::quat& delta ) { SetRotation( delta * GetRotation( ) ); }
 	void AddRotationEuler( const glm::vec3& delta ) { AddRotation( Math::EulerToQuat( delta ) ); }
 
 	void SetLocalPosition( const glm::vec3& position ) { m_Position = position; SetDirty( true ); }

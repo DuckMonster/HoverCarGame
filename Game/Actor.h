@@ -14,8 +14,8 @@ public:
 	void Init( );
 	void Destroy( );
 
-	void Update( const SUpdateData& data );
-	void Render( const SRenderData& data );
+	void Update( const SUpdateInfo& info );
+	void Render( const SRenderInfo& info );
 
 	// Tree helping functions
 	size_t NumChildren( );
@@ -34,6 +34,7 @@ public:
 
 	template<typename TComp>
 	TComp* GetComponent( );
+	CComponent* GetComponent( int index ) const { return m_Components[index]; }
 
 	template<typename TComp>
 	TComp* FindComponent( );
@@ -42,9 +43,13 @@ public:
 	bool RemoveComponent( );
 	bool RemoveComponent( class CComponent* component );
 
+	// Scripts
+	void AttachScript( ActorScript script ) { m_Scripts.push_back( script ); }
+	size_t NumScripts( ) { return m_Scripts.size( ); }
+
 	class CTransform* Transform( ) const { return m_Transform; }
 
-	size_t GetComponentCount( ) const { return m_Components.size( ); }
+	size_t NumComponents( ) const { return m_Components.size( ); }
 
 private:
 	class CScene* const	m_Scene;
@@ -55,6 +60,9 @@ private:
 
 	// Components
 	std::vector<class CComponent*> m_Components;
+
+	// Scripts
+	std::vector<ActorScript> m_Scripts;
 	
 	std::string m_Name = "";
 };
