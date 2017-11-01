@@ -1,0 +1,5 @@
+{
+	"HostName": "localhost",
+	"Port": 5555,
+	"QuitOnDisconnect": true
+}

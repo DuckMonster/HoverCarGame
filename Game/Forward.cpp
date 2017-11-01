@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#if !defined(GAME_SERVER)
 #include "Forward.h"
 
 #include "Scene.h"
@@ -124,9 +125,9 @@ void CForward::Create( )
 	glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DepthTexture, 0 );
 
 	if (glCheckFramebufferStatus( GL_FRAMEBUFFER ) != GL_FRAMEBUFFER_COMPLETE)
-		Print_Log( "Forward Framebuffer Not Complete" );
+		Debug_Log( "Forward Framebuffer Not Complete" );
 	else
-		Print_Log( "Forward Framebuffer Created!" );
+		Debug_Log( "Forward Framebuffer Created!" );
 
 	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 
@@ -166,3 +167,4 @@ void CForward::RecompileShaders( )
 	glDeleteProgram( m_MotionBlurShader );
 	m_MotionBlurShader = GLUtils::CreateShaderFromFile( "../Assets/Shader/motion_blur" );
 }
+#endif

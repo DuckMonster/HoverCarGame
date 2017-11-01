@@ -1,4 +1,5 @@
 #pragma once
+#if !defined(GAME_SERVER)
 #include "Scene.h"
 
 struct GBuffer
@@ -27,6 +28,7 @@ private:
 	void GBufferPass( CScene* scene );
 	void ShadowPass( CScene* scene );
 	void LightPass( CScene* scene );
+	void ForwardPass( CScene* scene );
 
 	void InitGBuffer( );
 	void DestroyGBuffer( );
@@ -42,9 +44,11 @@ private:
 
 	SFramebufferSetup m_ShadowPass;
 	SFramebufferSetup m_LightPass;
+	SFramebufferSetup m_ForwardPass;
 
 	glm::mat4 m_ViewInv;
 	glm::mat4 m_ProjInv;
 
 	glm::mat4 m_LightSpace;
 };
+#endif

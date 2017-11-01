@@ -1,6 +1,9 @@
 #include "stdafx.h"
+
+#if !defined(GAME_SERVER)
 #include "Gizmo.h"
 #include "GLUtils.h"
+
 
 using namespace glm;
 
@@ -58,3 +61,4 @@ void CGizmo::DrawLine( const glm::vec3& start, const glm::vec3& end, const glm::
 	glLineWidth( size );
 	glDrawArrays( GL_LINES, 0, 2 );
 }
+#endif

@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "Scene.h"
+
+#include <net/BinaryStream.h>
 #include "Game.h"
 #include "Actor.h"
 #include "Component.h"
@@ -7,14 +9,25 @@
 #include "Camera.h"
 #include "Transform.h"
 #include "MeshRenderer.h"
-#include "MeshDataSourceResource.h"
-#include "MeshDataSourceCustom.h"
 #include "Material.h"
 #include "File.h"
 #include "DirectionalLight.h"
+#include "PlayerController.h"
+#include "CameraController.h"
+#include "StringUtils.h"
+#include "Random.h"
+#include "ActorChannel.h"
+#include "ServerBall.h"
+#include "MeshResource.h"
+#include "CustomRenderer.h"
+#include "CharacterMovement.h"
+#include "SimpleAIController.h"
 
 using namespace std;
 using namespace glm;
+using namespace Network;
+using namespace neteng;
+using namespace Resource;
 
 namespace
 {
@@ -22,12 +35,20 @@ namespace
 	CActor* infiniFloor = nullptr;
 
 	CMeshRenderer* renderer = nullptr;
-	CMeshDataSourceResource* source1 = nullptr;
-	CMeshDataSourceResource* source2 = nullptr;
 
 	CMaterial* material = nullptr;
 	CMaterial* floorMaterial = nullptr;
+	CMaterial* aimMaterial = nullptr;
 }
+
+namespace
+{
+	enum class SceneNetMessage : char
+	{
+		SpawnNetActor
+	};
+}
+
 
 /**	Constructor
 *******************************************************************************/
@@ -35,132 +56,80 @@ CScene::CScene( CGame* game ) :
 	m_Game( game ),
 	m_RootActor( nullptr )
 {
-	material = new CMaterial( );
+	m_InitData.LoadFile( "../Assets/Data/init.json" );
+
+	material = new CMaterial();
 	material->LoadFromFile( "../Assets/Shader/Deferred/D_default" );
-	floorMaterial = new CMaterial( );
+	floorMaterial = new CMaterial();
 	floorMaterial->LoadFromFile( "../Assets/Shader/Deferred/D_infinite_floor" );
+	aimMaterial = new CMaterial();
+	aimMaterial->LoadFromFile( "../Assets/Shader/Forward/F_aim_cone" );
 
 	m_RootActor = new CActor( this );
 	m_RootActor->SetName( "ROOT" );
-	m_RootActor->Init( );
+	m_RootActor->Init();
 
-	{
-		cube = m_RootActor->SpawnActor( "Cube" );
+	CMeshResource* sceneMesh = m_ResourceBank.GetMesh( "../Assets/MyScene.fbx" );
+	CActor* meshActor = sceneMesh->Instantiate( m_RootActor );
 
-		renderer = cube->AddComponent<CMeshRenderer>( );
-		source1 = cube->AddComponent<CMeshDataSourceResource>( );
-
-		renderer->SetMaterial( material );
-		renderer->SetMeshDataSource( source1 );
-		source1->LoadResource( "../Assets/UnitCube.fbx" );
-
-		cube->AttachScript( []( CActor* actor, const SUpdateInfo& info )
-		{
-			float angle = -18.235f * info.Delta;
-			float yPos = sin( CTime::TotalElapsed( ) * 0.8f ) * 0.6f;
-
-			actor->Transform( )->AddRotationEuler( vec3( 0.f, angle, 0.f ) );
-			actor->Transform( )->SetLocalPosition( vec3( 0.f, 1.5f + yPos, 0.f ) );
-		} );
-	}
-
-	{
-		CActor* cube2 = m_RootActor->SpawnActor( "Bouncy Cube" );
-		cube2->Transform( )->SetLocalPosition( vec3( 1.5f, 4.f, 0.f ) );
-
-		CMeshRenderer* rend = cube2->AddComponent<CMeshRenderer>( );
-		CMeshDataSourceResource* src = cube2->AddComponent<CMeshDataSourceResource>( );
-
-		rend->SetMaterial( material );
-		rend->SetMeshDataSource( src );
-		src->LoadResource( "../Assets/UnitSphere.fbx" );
-
-		cube2->AttachScript( []( CActor* actor, const SUpdateInfo& info )
-		{
-			static float velo = 0.f;
-			static const float GRAV = -8.f;
-
-			static float jump_timer = 0.f;
-
-			jump_timer += info.Delta;
-			if (jump_timer > 5.f)
-			{
-				velo = 5.f;
-				jump_timer = 0.f;
-			}
-
-			float yPos = actor->Transform( )->GetLocalPosition( ).y - 0.5f;
-
-			velo += GRAV * info.Delta;
-			if (yPos + velo * info.Delta < 0.f)
-				velo *= -0.6f;
-
-			yPos += velo * info.Delta;
-
-			vec3 newPos = actor->Transform( )->GetLocalPosition( );
-			newPos.y = yPos + 0.5f;
-
-			actor->Transform( )->SetLocalPosition( newPos );
-		} );
-	}
+	m_Physics.SetRoot( m_RootActor );
 
 	infiniFloor = m_RootActor->SpawnActor( "Infinite Floor" );
 	{
-		CMeshRenderer* renderer = infiniFloor->AddComponent<CMeshRenderer>( );
-		CMeshDataSourceCustom* source = infiniFloor->AddComponent<CMeshDataSourceCustom>( );
+		CCustomRenderer* renderer = infiniFloor->AddComponent<CCustomRenderer>();
 
-		renderer->SetMeshDataSource( source );
 		renderer->SetMaterial( floorMaterial );
-		source->SetDrawCount( 4 );
+		renderer->SetDrawCount( 4 );
 
-		float positions[] ={
+#if !defined(GAME_SERVER)
+		float positions[] = {
 			-1.f, 0.f, -1.f,
 			1.f, 0.f, -1.f,
 			1.f, 0.f, 1.f,
 			-1.f, 0.f, 1.f
 		};
 
-		GLuint pos = source->AddBuffer( 0, GL_FLOAT, 3, 0, 0 );
+		GLuint pos = renderer->AddBuffer();
+		renderer->BindAttribute( 0, 0, GL_FLOAT, 3, 0, 0 );
 
 		glBindBuffer( GL_ARRAY_BUFFER, pos );
 		glBufferData( GL_ARRAY_BUFFER, sizeof( positions ), positions, GL_STATIC_DRAW );
 
-		source->SetDrawMode( GL_QUADS );
+		renderer->SetDrawMode( GL_QUADS );
+#endif
 	}
-
-	infiniFloor->AttachScript( []( CActor* actor, const SUpdateInfo& info )
-	{
-		vec3 cubePosition = cube->Transform( )->GetPosition( );
-		actor->Transform( )->SetPosition( vec3( cubePosition.x, 0.f, cubePosition.z ) );
-	} );
 
 	// Setup camera
 	CActor* cameraRoot = m_RootActor->SpawnActor( "Camera Root" );
+	cameraRoot->AddComponent<CCameraController>();
 	CActor* camera = cameraRoot->SpawnActor( "My Camera" );
-	camera->AddComponent<CCamera>( );
+	camera->AddComponent<CCamera>();
 
-	camera->Transform( )->SetLocalPosition( vec3( -5.f, 1.f, 5.f ) );
-	camera->Transform( )->LookAt( vec3( ) );
+	camera->Transform()->SetPosition( vec3( 0.f, 5.f, 5.f ) );
+	camera->Transform()->LookAt( vec3() );
 
-	cameraRoot->AttachScript( []( CActor* actor, const SUpdateInfo& info )
-	{
-		float angle = 12.f * info.Delta;
-		actor->Transform( )->AddRotationEuler( vec3( 0.f, angle, 0.f ) );
-	} );
+	infiniFloor->Transform()->SetParent( cameraRoot->Transform() );
 
 	// Setup light
-	CActor* light = m_RootActor->SpawnActor( "Directional Light" );
-	light->AddComponent<CDirectionalLight>( );
+	CActor* light = cameraRoot->SpawnActor( "Directional Light" );
+	light->AddComponent<CDirectionalLight>();
 
-	light->Transform( )->SetLocalPosition( vec3( 9.f, 7.f, 5.f ) );
-	light->Transform( )->LookAt( vec3( ) );
+	light->Transform()->SetPosition( vec3( 9.f, 7.f, 5.f ) );
+	light->Transform()->LookAt( vec3() );
 
-	PrintScene( );
+	// TEMP AI
+#if defined(GAME_SERVER)
+	CActor* aiActor = SpawnActor( "Simple AI" );
+	aiActor->AddComponent<CCharacterMovement>();
+	aiActor->AddComponent<CSimpleAIController>();
+
+	RegisterNetActor( aiActor );
+#endif
 }
 
 /**	Destructor
 *******************************************************************************/
-CScene::~CScene( )
+CScene::~CScene()
 {
 }
 
@@ -168,25 +137,45 @@ CScene::~CScene( )
 *******************************************************************************/
 void CScene::Update( float delta )
 {
-	SUpdateInfo data{ delta, m_Game->GetInput( ) };
+#if !defined(GAME_SERVER)
+	SUpdateInfo data( m_Game->GetInput() );
+	data.Delta = delta;
+
+	if ( data.Input.KeyPressed( sf::Keyboard::P ) )
+		PrintScene( data.Input.KeyDown( sf::Keyboard::LShift ) );
+#else
+	SUpdateInfo data{ delta };
+#endif
+
+	if ( m_InitData.LoadIfChanged() )
+	{
+		m_RootActor->ReLoadComponents();
+	}
+
+	data.Phase = UpdatePhase::Pre;
 	m_RootActor->Update( data );
+	data.Phase = UpdatePhase::Main;
+	m_RootActor->Update( data );
+	data.Phase = UpdatePhase::Post;
+	m_RootActor->Update( data );
+
 }
 
 /**	Get Active Camera
 *******************************************************************************/
-CCamera* CScene::GetActiveCamera( )
+CCamera* CScene::GetActiveCamera()
 {
 	// Find active camera
-	if (!m_ActiveCamera)
+	if ( !m_ActiveCamera )
 	{
-		m_ActiveCamera = m_RootActor->FindComponent<CCamera>( );
+		m_ActiveCamera = m_RootActor->FindComponent<CCamera>();
 
 		// Spawn one if necessary
-		if (!m_ActiveCamera)
+		if ( !m_ActiveCamera )
 		{
-			m_ActiveCamera = m_RootActor->SpawnActor( "Main Camera" )->AddComponent<CCamera>( );
-			m_ActiveCamera->Transform( )->SetLocalPosition( vec3( 1.f, 1.f, 1.f ) * 10.f );
-			m_ActiveCamera->Transform( )->LookAt( vec3( 0.f ) );
+			m_ActiveCamera = m_RootActor->SpawnActor( "Main Camera" )->AddComponent<CCamera>();
+			m_ActiveCamera->Transform()->SetPosition( vec3( 1.f, 1.f, 1.f ) * 10.f );
+			m_ActiveCamera->Transform()->LookAt( vec3( 0.f ) );
 		}
 	}
 
@@ -195,27 +184,134 @@ CCamera* CScene::GetActiveCamera( )
 
 /**	Print Scene
 *******************************************************************************/
-void CScene::PrintScene( )
+void CScene::PrintScene( bool printComponents )
 {
 	string sceneString;
 
 	sceneString += "\n-- SCENE --\n";
-	GetActorString( m_RootActor, 1, sceneString );
-
-	Print_Log( "%s", sceneString.c_str( ) );
+	GetActorString( m_RootActor, printComponents, 1, sceneString );
+	Debug_Log( "%s", sceneString.c_str() );
 }
+
+/**	Evaluate Path
+*******************************************************************************/
+CActor* CScene::EvaluatePath( const CPath& path ) const
+{
+	return m_RootActor->EvaluatePath( path );
+}
+
+/**	Spawn Actor
+*******************************************************************************/
+CActor* CScene::SpawnActor( const std::string& name )
+{
+	return m_RootActor->SpawnActor( name );
+}
+
+/**	On Net Message
+*******************************************************************************/
+void CScene::OnNetMessage( const neteng::Packet& pkt )
+{
+	BinaryReader reader( pkt.Data() );
+	SceneNetMessage msg = reader.Read<SceneNetMessage>();
+
+	switch ( msg )
+	{
+	case SceneNetMessage::SpawnNetActor:
+		break;
+	}
+}
+
+#if defined(GAME_SERVER)
+/**	Spawn Net Actor
+*******************************************************************************/
+void CScene::SpawnBouncyBall()
+{
+	CActor* ball = SpawnActor( "Bouncy Ball" );
+	ball->Transform()->SetPosition( vec3( CRandom::Value( -10.f, 10.f ), 5.f, CRandom::Value( -10.f, 10.0f ) ) );
+	ball->Transform()->SetScale( vec3( CRandom::Value( 0.5f, 2.f ) ) );
+	ball->AddComponent<CServerBall>()->Set( CRandom::Value( 0.1f, 0.5f ), CRandom::Value( 5.f, 20.f ) );
+
+	RegisterNetActor( ball );
+}
+
+/**	On Player Connected
+*******************************************************************************/
+void CScene::OnPlayerConnected( peer_hash hash )
+{
+	for ( CActor* netActor : m_NetActorList )
+		netActor->ReplicateTo( hash );
+
+	SpawnPlayer( hash );
+	SpawnBouncyBall();
+}
+
+/**	On Player Disconnected
+*******************************************************************************/
+void CScene::OnPlayerDisconnected( neteng::peer_hash hash )
+{
+	CActor* playerActor = m_PlayerMap[hash];
+	channel_id channel = playerActor->GetChannel()->GetId();
+
+	m_PlayerMap[hash] = nullptr;
+	m_NetActorList.erase( find( m_NetActorList.begin(), m_NetActorList.end(), playerActor ) );
+	m_NetActorMap.erase( channel );
+
+	playerActor->Destroy();
+}
+
+/**	Spawn Player
+*******************************************************************************/
+void CScene::SpawnPlayer( neteng::peer_hash hash )
+{
+	CPlayerController* player;
+
+	{
+		cube = m_RootActor->SpawnActor( "Player" );
+		cube->AddComponent<CCharacterMovement>();
+		player = cube->AddComponent<CPlayerController>();
+		CActor* spawnActor = m_RootActor->Find( "spawn" );
+
+		if ( spawnActor )
+			player->Transform()->SetPosition( spawnActor->Transform()->GetPosition() );
+		else
+			Debug_Log( "No spawn for player!" );
+
+		RegisterNetActor( cube );
+
+		player->SendPossess( hash );
+	}
+
+	m_PlayerMap[hash] = player->GetActor();
+}
+
+/**	Register Net Actor
+*******************************************************************************/
+void CScene::RegisterNetActor( CActor * actor )
+{
+	channel_id chnlId = m_LastNetId++;
+
+	actor->Replicate( chnlId );
+
+	// Add all current peers
+	for ( CNetwork::peer_iterator it = GetGame()->GetNetwork()->PeerBegin(); it != GetGame()->GetNetwork()->PeerEnd(); ++it )
+		actor->ReplicateTo( *it );
+
+	m_NetActorList.push_back( actor );
+	m_NetActorMap[chnlId] = actor;
+}
+#endif
 
 /**	Get Actor String
 *******************************************************************************/
-void CScene::GetActorString( CActor* actor, int indent, string& outString )
+void CScene::GetActorString( CActor* actor, bool printComponents, int indent, string& outString )
 {
 	struct
 	{
 		void IndentString( string& str, int indent, bool mark = false )
 		{
-			for (int i=0; i < indent; i++)
+			for ( int i = 0; i < indent; i++ )
 			{
-				if (mark && i == indent - 1)
+				if ( mark && i == indent - 1 )
 					str += "-  ";
 				else
 					str += "   ";
@@ -224,21 +320,25 @@ void CScene::GetActorString( CActor* actor, int indent, string& outString )
 	} func;
 
 	func.IndentString( outString, indent, true );
-	outString += actor->GetName( ) + '\n';
-	for (size_t i = 0; i < actor->NumComponents( ); i++)
+	outString += actor->GetName().str() + '\n';
+	if ( printComponents )
 	{
-		CComponent* comp = actor->GetComponent( i );
-		func.IndentString( outString, indent, false );
+		for ( size_t i = 0; i < actor->NumComponents(); i++ )
+		{
+			CComponent* comp = actor->GetComponentAt( i );
+			func.IndentString( outString, indent, false );
 
-		outString += comp->GetName( ) + '\n';
+			outString += comp->GetName();
+			outString += " " + comp->GetDisplayString() + '\n';
+		}
+
+		if ( actor->NumScripts() > 0 )
+		{
+			func.IndentString( outString, indent, false );
+			outString += "( " + to_string( actor->NumScripts() ) + " ) scripts\n";
+		}
 	}
 
-	if (actor->NumScripts( ) > 0)
-	{
-		func.IndentString( outString, indent, false );
-		outString += "( " + to_string( actor->NumScripts( ) ) + " ) scripts\n";
-	}
-
-	for (size_t i = 0; i < actor->NumChildren( ); i++)
-		GetActorString( actor->GetChild( i ), indent + 1, outString );
+	for ( size_t i = 0; i < actor->NumChildren(); i++ )
+		GetActorString( actor->GetChild( i ), printComponents, indent + 1, outString );
 }

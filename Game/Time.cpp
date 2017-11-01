@@ -27,14 +27,14 @@ CTimePoint::CTimePoint( const CTimePoint && other ) :
 float CTimePoint::Elapsed( )
 {
 	timepoint nowTime = clock::now( );
-	return (float)duration_cast<microseconds>(nowTime - m_TimePoint).count( ) * 1.0e-6;
+	return (float)(duration_cast<microseconds>(nowTime - m_TimePoint).count( ) * 1.0e-6);
 }
 
 /**	Operator -
 *******************************************************************************/
 float CTimePoint::operator-( const CTimePoint & other )
 {
-	return (float)duration_cast<microseconds>(m_TimePoint - other.m_TimePoint).count( ) * 1.0e-6;
+	return (float)(duration_cast<microseconds>(m_TimePoint - other.m_TimePoint).count( ) * 1.0e-6);
 }
 
 /**	Operator =

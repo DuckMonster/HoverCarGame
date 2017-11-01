@@ -1,4 +1,5 @@
 #pragma once
+#if !defined(GAME_SERVER)
 namespace GLUtils
 {
 	bool ReadFile( const char* filePath, std::string& outString );
@@ -43,3 +44,4 @@ namespace GLUtils
 
 	void RenderTexture( GLuint texture );
 }
+#endif

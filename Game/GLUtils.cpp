@@ -1,7 +1,9 @@
 #include "stdafx.h"
+
+#if !defined(GAME_SERVER)
 #include "GLUtils.h"
-#include <fstream>
 #include <SOIL/SOIL.h>
+#include <fstream>
 #include "Material.h"
 
 using namespace std;
@@ -31,7 +33,7 @@ bool GLUtils::ReadFile( const char* filePath, string& outString )
 *******************************************************************************/
 GLuint GLUtils::CreateShaderFromFile( const char * path )
 {
-	Print_Log( "Loading shader \"%s\"", path );
+	Debug_Log( "Loading shader \"%s\"", path );
 
 	std::string test;
 	ReadFile( "sometext.txt", test );
@@ -52,7 +54,7 @@ GLuint GLUtils::CreateShaderFromFile( const char * path )
 *******************************************************************************/
 GLuint GLUtils::CreateShaderFromFiles( const char * vertPath, const char * fragPath )
 {
-	Print_Log( "Loading shaders \"%s\", \"%s\"", vertPath, fragPath );
+	Debug_Log( "Loading shaders \"%s\", \"%s\"", vertPath, fragPath );
 
 	std::string vertSrc, fragSrc;
 
@@ -84,7 +86,7 @@ GLuint GLUtils::CreateShaderSrc( const char* vertSrc, const char* fragSrc )
 	glGetProgramInfoLog( program, 1024, nullptr, logBuffer );
 	if (strlen( logBuffer ) > 0)
 	{
-		Print_Log( "Shader compile log:\n%s", logBuffer );
+		Debug_Log( "Shader compile log:\n%s", logBuffer );
 	}
 
 	// Clean up
@@ -100,14 +102,14 @@ GLuint GLUtils::CreateShaderSrc( const char* vertSrc, const char* fragSrc )
 *******************************************************************************/
 bool GLUtils::CreateTextureFromFile( const char * path, GLuint& outHandle )
 {
-	Print_Log( "Loading texture \"%s\"", path );
+	Debug_Log( "Loading texture \"%s\"", path );
 
 	int width, height;
 	unsigned char* image = SOIL_load_image( path, &width, &height, nullptr, SOIL_LOAD_RGB );
 
 	if (image == nullptr)
 	{
-		Print_Log( "Failed to load \"%s\"", path );
+		Debug_Log( "Failed to load \"%s\"", path );
 		return false;
 	}
 
@@ -171,3 +173,4 @@ void GLUtils::RenderTexture( GLuint texture )
 	glBindTexture( GL_TEXTURE_2D, texture );
 	glDrawArrays( GL_QUADS, 0, 4 );
 }
+#endif

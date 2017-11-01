@@ -30,7 +30,7 @@ bool File::ReadFile( const char* filePath, string& outString )
 string File::GetFileFromPath( const string& fullPath )
 {
 	int lastSlash = -1;
-	for (int i=0; i < fullPath.length( ); i++)
+	for (size_t i=0; i < fullPath.length( ); i++)
 	{
 		if (fullPath[i] == '\\' || fullPath[i] == '/')
 			lastSlash = i;

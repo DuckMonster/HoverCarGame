@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="CActor">
+    <DisplayString>{{ Name = {m_Name}, Component Count = {m_Components.size()} }</DisplayString>
+  </Type>
+  <Type Name="CComponent">
+    <DisplayString>{{ {m_Name}, Owner = {m_Actor} }}</DisplayString>
+  </Type>
+  <Type Name="CTransform">
+    <DisplayString>{{ Owner = {m_Actor} }}</DisplayString>
+  </Type>
+</AutoVisualizer>

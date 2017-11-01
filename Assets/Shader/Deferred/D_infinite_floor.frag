@@ -14,7 +14,5 @@ void main() {
 	float total = floor(fs_in.world.x) + floor(fs_in.world.z);
 	total = mod(total, 2.0);
 	o_Color = mix(COL_1, COL_2, step(total, 0.5));
-	o_Color = vec3(0.4, 0.8, 0.55);
 	o_Normal = vec3(0.0, 1.0, 0.0);
-	//o_Color = fs_in.world;
 }

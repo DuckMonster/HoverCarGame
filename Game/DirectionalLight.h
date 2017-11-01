@@ -4,5 +4,5 @@
 class CDirectionalLight : public CComponent
 {
 public:
-	CDirectionalLight( CActor* actor ) : CComponent( actor, "Directional Light" ) {}
+	CDirectionalLight( CActor* actor ) : CComponent( actor ) { Register<CDirectionalLight>(); }
 };

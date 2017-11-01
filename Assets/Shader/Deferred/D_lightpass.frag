@@ -19,7 +19,7 @@ uniform mat4 u_LightSpace;
 uniform mat4 u_ProjectionInv;
 uniform mat4 u_ViewInv;
 
-out vec3 o_Color;
+out vec4 o_Color;
 
 float Diffuse(in vec3 normal, in vec3 light) 
 {
@@ -78,7 +78,8 @@ void main()
 	// Shadow
 	float shadow = Shadow(normal, depth);
 
-	o_Color = color * (diffuse * shadow) + ambient;
+	o_Color.xyz = color * (diffuse * shadow) + ambient;
+	o_Color.a = 1.0;
 	//o_Color = ambient;
 
 	//Normalize color

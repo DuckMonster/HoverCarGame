@@ -16,29 +16,74 @@
     <Filter Include="Source\Game\Actor">
       <UniqueIdentifier>{2d72b47a-5f75-48c7-811d-766f7a30f27f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Game\Actor\Components">
-      <UniqueIdentifier>{6f4abad5-3d7f-4297-82fd-106afc353808}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Game\Actor\Components\Engine">
-      <UniqueIdentifier>{9a9000e9-a9d2-40f1-96f9-d8a8bd988110}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Game\Actor\Components\Game">
-      <UniqueIdentifier>{a37cea93-39e8-4899-a04a-72a7c34e49f8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Assets">
       <UniqueIdentifier>{ff8d8747-3274-444b-aae8-0598b35d721c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Assets\Shader">
       <UniqueIdentifier>{23b97fcb-a9d7-4f82-9303-0df2e7f99508}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Game\Actor\Components\Engine\Rendering">
-      <UniqueIdentifier>{190f3644-fd64-4fb8-971f-b600557869f0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Game\Rendering">
       <UniqueIdentifier>{9f0e7bde-b072-47a9-bc4c-14311f1ac069}</UniqueIdentifier>
     </Filter>
     <Filter Include="Assets\Shader\Deferred">
       <UniqueIdentifier>{b3d66d8c-a0e4-43a5-8579-b2f0331bdcc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shader\Forward">
+      <UniqueIdentifier>{6bdeba68-6ab1-423c-863b-bfb637effe4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Data">
+      <UniqueIdentifier>{4c934884-0a5d-4807-a3f2-0d6be6397905}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Utils\HelperFunctions">
+      <UniqueIdentifier>{16c9dd15-9fc7-46cd-9d93-ae09feaeabf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Utils\Data">
+      <UniqueIdentifier>{54781136-f6fd-4dee-a84f-7591f23a3905}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Utils\Rendering">
+      <UniqueIdentifier>{f185da8c-37f0-4645-b525-5665dc2f221b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Network">
+      <UniqueIdentifier>{eba33c14-f402-4f7c-9165-d949b023e8f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Component">
+      <UniqueIdentifier>{dbda9fa9-a814-41a2-825d-c40ae4c66e85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Component\Components">
+      <UniqueIdentifier>{6f4abad5-3d7f-4297-82fd-106afc353808}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Component\Components\Engine">
+      <UniqueIdentifier>{9a9000e9-a9d2-40f1-96f9-d8a8bd988110}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Component\Components\Engine\Rendering">
+      <UniqueIdentifier>{190f3644-fd64-4fb8-971f-b600557869f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Component\Components\Game">
+      <UniqueIdentifier>{a37cea93-39e8-4899-a04a-72a7c34e49f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Component\Components\Game\Projectile">
+      <UniqueIdentifier>{45b74cd2-cf21-4577-8bef-d33eb0b0fd74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Resource">
+      <UniqueIdentifier>{e30b48c4-967b-4a4d-a42d-c764175f87b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Component\Components\Engine\Collision">
+      <UniqueIdentifier>{48e324cb-1684-4902-8d43-0fdf9dc4aaa0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Physics">
+      <UniqueIdentifier>{f4c1351d-f0a8-4a93-8fe3-bfb5cd23c006}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Component\Components\Game\Character">
+      <UniqueIdentifier>{5605dc70-227f-48dd-9ec7-2ad707022cb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Component\Components\Game\Character\Player">
+      <UniqueIdentifier>{9d991b80-b407-4b99-befc-58ddd3485cd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\Component\Components\Game\Character\AI">
+      <UniqueIdentifier>{89f0847d-f0ab-44d1-aeb2-660bac1c773d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Utils\Pointer">
+      <UniqueIdentifier>{d244aa36-c088-4132-9be5-0592d7b5f8f9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -60,47 +105,20 @@
     <ClCompile Include="Actor.cpp">
       <Filter>Source\Game\Actor</Filter>
     </ClCompile>
-    <ClCompile Include="Component.cpp">
-      <Filter>Source\Game\Actor</Filter>
-    </ClCompile>
-    <ClCompile Include="Log.cpp">
-      <Filter>Source\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Time.cpp">
-      <Filter>Source\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Source\Game\Actor\Components\Engine</Filter>
+      <Filter>Source\Game\Component\Components\Engine</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
-      <Filter>Source\Game\Actor\Components\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Color.cpp">
-      <Filter>Source\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Gizmo.cpp">
-      <Filter>Source\Utils</Filter>
+      <Filter>Source\Game\Component\Components\Engine</Filter>
     </ClCompile>
     <ClCompile Include="Input.cpp">
       <Filter>Source\Game</Filter>
     </ClCompile>
     <ClCompile Include="MeshRenderer.cpp">
-      <Filter>Source\Game\Actor\Components\Engine\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshDataSource.cpp">
-      <Filter>Source\Game\Actor\Components\Engine\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshDataSourceResource.cpp">
-      <Filter>Source\Game\Actor\Components\Engine\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshDataSourceCustom.cpp">
-      <Filter>Source\Game\Actor\Components\Engine\Rendering</Filter>
+      <Filter>Source\Game\Component\Components\Engine\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Source\Game\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="File.cpp">
-      <Filter>Source\Utils</Filter>
     </ClCompile>
     <ClCompile Include="Forward.cpp">
       <Filter>Source\Game\Rendering</Filter>
@@ -108,11 +126,95 @@
     <ClCompile Include="Deferred.cpp">
       <Filter>Source\Game\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="GLUtils.cpp">
-      <Filter>Source\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="DirectionalLight.cpp">
-      <Filter>Source\Game\Actor\Components\Engine</Filter>
+      <Filter>Source\Game\Component\Components\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraController.cpp">
+      <Filter>Source\Game\Component\Components\Game\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="File.cpp">
+      <Filter>Source\Utils\HelperFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="Color.cpp">
+      <Filter>Source\Utils\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>Source\Utils\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="DataStructure.cpp">
+      <Filter>Source\Utils\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Gizmo.cpp">
+      <Filter>Source\Utils\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="GLUtils.cpp">
+      <Filter>Source\Utils\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>Source\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>Source\Utils\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="ActorChannel.cpp">
+      <Filter>Source\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Source\Game\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentFactory.cpp">
+      <Filter>Source\Game\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="LineRenderer.cpp">
+      <Filter>Source\Game\Component\Components\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="RPC.cpp">
+      <Filter>Source\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Projectile.cpp">
+      <Filter>Source\Game\Component\Components\Game\Projectile</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerBall.cpp">
+      <Filter>Source\Game\Component\Components\Game\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceBank.cpp">
+      <Filter>Source\Game\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshResource.cpp">
+      <Filter>Source\Game\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource.cpp">
+      <Filter>Source\Game\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomRenderer.cpp">
+      <Filter>Source\Game\Component\Components\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Source\Game\Component\Components\Engine\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics.cpp">
+      <Filter>Source\Game\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsMath.cpp">
+      <Filter>Source\Game\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterMovement.cpp">
+      <Filter>Source\Game\Component\Components\Game\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerController.cpp">
+      <Filter>Source\Game\Component\Components\Game\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleAIController.cpp">
+      <Filter>Source\Game\Component\Components\Game\Character\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="Name.cpp">
+      <Filter>Source\Utils\Pointer</Filter>
+    </ClCompile>
+    <ClCompile Include="Path.cpp">
+      <Filter>Source\Utils\Pointer</Filter>
+    </ClCompile>
+    <ClCompile Include="Serialize.cpp">
+      <Filter>Source\Utils\Data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -128,29 +230,11 @@
     <ClInclude Include="Actor.h">
       <Filter>Source\Game\Actor</Filter>
     </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>Source\Game\Actor</Filter>
-    </ClInclude>
-    <ClInclude Include="Log.h">
-      <Filter>Source\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Time.h">
-      <Filter>Source\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Source\Game\Actor\Components\Engine</Filter>
+      <Filter>Source\Game\Component\Components\Engine</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
-      <Filter>Source\Game\Actor\Components\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Gizmo.h">
-      <Filter>Source\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Color.h">
-      <Filter>Source\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Math.h">
-      <Filter>Source\Utils</Filter>
+      <Filter>Source\Game\Component\Components\Engine</Filter>
     </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Source\Game</Filter>
@@ -159,34 +243,121 @@
       <Filter>Source\Game\Actor</Filter>
     </ClInclude>
     <ClInclude Include="MeshRenderer.h">
-      <Filter>Source\Game\Actor\Components\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBufferType.h">
-      <Filter>Source\Game\Actor\Components\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshDataSource.h">
-      <Filter>Source\Game\Actor\Components\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshDataSourceResource.h">
-      <Filter>Source\Game\Actor\Components\Engine\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshDataSourceCustom.h">
-      <Filter>Source\Game\Actor\Components\Engine\Rendering</Filter>
+      <Filter>Source\Game\Component\Components\Engine\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>Source\Game\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="File.h">
-      <Filter>Source\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Deferred.h">
       <Filter>Source\Game\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="GLUtils.h">
-      <Filter>Source\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="DirectionalLight.h">
-      <Filter>Source\Game\Actor\Components\Engine</Filter>
+      <Filter>Source\Game\Component\Components\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraController.h">
+      <Filter>Source\Game\Component\Components\Game\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="File.h">
+      <Filter>Source\Utils\HelperFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>Source\Utils\HelperFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
+      <Filter>Source\Utils\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>Source\Utils\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStructure.h">
+      <Filter>Source\Utils\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Gizmo.h">
+      <Filter>Source\Utils\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="GLUtils.h">
+      <Filter>Source\Utils\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="StringUtils.h">
+      <Filter>Source\Utils\HelperFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>Source\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.h">
+      <Filter>Source\Utils\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="ActorChannel.h">
+      <Filter>Source\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkTypes.h">
+      <Filter>Source\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Serialize.h">
+      <Filter>Source\Utils\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Source\Game\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentFactory.h">
+      <Filter>Source\Game\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerBall.h">
+      <Filter>Source\Game\Component\Components\Game\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="RPC.h">
+      <Filter>Source\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>Source\Utils\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Projectile.h">
+      <Filter>Source\Game\Component\Components\Game\Projectile</Filter>
+    </ClInclude>
+    <ClInclude Include="LineRenderer.h">
+      <Filter>Source\Game\Component\Components\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceBank.h">
+      <Filter>Source\Game\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Source\Game\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshResource.h">
+      <Filter>Source\Game\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomRenderer.h">
+      <Filter>Source\Game\Component\Components\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Source\Game\Component\Components\Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.h">
+      <Filter>Source\Game\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsMath.h">
+      <Filter>Source\Game\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterMovement.h">
+      <Filter>Source\Game\Component\Components\Game\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerController.h">
+      <Filter>Source\Game\Component\Components\Game\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterController.h">
+      <Filter>Source\Game\Component\Components\Game\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleAIController.h">
+      <Filter>Source\Game\Component\Components\Game\Character\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Pointers.h">
+      <Filter>Source\Utils\Pointer</Filter>
+    </ClInclude>
+    <ClInclude Include="Name.h">
+      <Filter>Source\Utils\Pointer</Filter>
+    </ClInclude>
+    <ClInclude Include="Path.h">
+      <Filter>Source\Utils\Pointer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -253,5 +424,32 @@
     <None Include="..\Assets\Shader\Deferred\D_shadowpass.vert">
       <Filter>Assets\Shader\Deferred</Filter>
     </None>
+    <None Include="..\Assets\Shader\Forward\F_aim_cone.vert">
+      <Filter>Assets\Shader\Forward</Filter>
+    </None>
+    <None Include="..\Assets\Shader\Forward\F_aim_cone.frag">
+      <Filter>Assets\Shader\Forward</Filter>
+    </None>
+    <None Include="..\Assets\Data\init.json">
+      <Filter>Assets\Data</Filter>
+    </None>
+    <None Include="..\Assets\Shader\Forward\F_aim_line.vert">
+      <Filter>Assets\Shader\Forward</Filter>
+    </None>
+    <None Include="..\Assets\Shader\Forward\F_aim_line.frag">
+      <Filter>Assets\Shader\Forward</Filter>
+    </None>
+    <None Include="..\Assets\Data\net.json">
+      <Filter>Assets\Data</Filter>
+    </None>
+    <None Include="..\Assets\Shader\Deferred\D_linerenderer.frag">
+      <Filter>Assets\Shader\Deferred</Filter>
+    </None>
+    <None Include="..\Assets\Shader\Deferred\D_linerenderer.vert">
+      <Filter>Assets\Shader\Deferred</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="debug.natvis" />
   </ItemGroup>
 </Project>

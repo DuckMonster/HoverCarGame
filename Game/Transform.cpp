@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "Transform.h"
+#include "Actor.h"
+#include "Scene.h"
 #include <glm/gtx/matrix_decompose.hpp>
 
 using namespace glm;
@@ -18,15 +20,15 @@ CTransform::CTransform( CActor* actor ) :
 *******************************************************************************/
 void CTransform::SetParent( CTransform* parent )
 {
-	if (parent == m_Parent)
+	if ( parent == m_Parent )
 		return;
 
 	// Unparent from current
-	if (m_Parent)
+	if ( m_Parent )
 	{
-		transform_iterator foundIt = find( m_Parent->m_Children.begin( ), m_Parent->m_Children.end( ), this );
+		transform_iterator foundIt = find( m_Parent->m_Children.begin(), m_Parent->m_Children.end(), this );
 
-		if (foundIt != m_Parent->m_Children.end( ))
+		if ( foundIt != m_Parent->m_Children.end() )
 			m_Parent->m_Children.erase( foundIt );
 
 		m_Parent = nullptr;
@@ -34,50 +36,114 @@ void CTransform::SetParent( CTransform* parent )
 
 	m_Parent = parent;
 
-	// Add as child
-	if (m_Parent)
+	if ( m_Parent )
 	{
+		// Make sure name is unique
+		CName uniqueName = CName::MakeUnique( GetActor()->GetName(), parent->GetActor() );
+		if ( uniqueName != GetActor()->GetName() )
+		{
+			Debug_Log( "Unique name: %s -> %s", GetActor()->GetName().c_str(), uniqueName.c_str() );
+			GetActor()->SetName( uniqueName );
+		}
+
+		// Add as child
 		m_Parent->m_Children.push_back( this );
 	}
+
+	GetActor()->SetPathDirty();
+}
+
+/**	Set Transform
+*******************************************************************************/
+void CTransform::SetTransform( CTransform * other )
+{
+	m_Position = other->m_Position;
+	m_Rotation = other->m_Rotation;
+	m_Scale = other->m_Scale;
+
+	SetDirty( true );
+}
+
+/**	Set Transform
+*******************************************************************************/
+void CTransform::SetTransform( const glm::mat4& transform )
+{
+	// Get scale factor
+	vec3 scale( length( vec3( transform[0] ) ), length( vec3( transform[1] ) ), length( vec3( transform[2] ) ) );
+
+	// Rotation
+	mat3 rotMatrix( transform );
+	rotMatrix[0] /= scale[0];
+	rotMatrix[1] /= scale[1];
+	rotMatrix[2] /= scale[2];
+
+	quat rotation( rotMatrix );
+
+	// Translation
+	vec3 translation( transform[3] );
+
+	SetPosition( translation );
+	SetRotation( rotation );
+	SetScale( scale );
+}
+
+/**	Set Position And Rotation (quat)
+*******************************************************************************/
+void CTransform::SetPositionAndRotation( const vec3 & position, const glm::quat & rotation )
+{
+	m_Position = position;
+	m_Rotation = rotation;
+
+	SetDirty( true );
+}
+
+/**	Set Position And Rotation (euler)
+*******************************************************************************/
+void CTransform::SetPositionAndRotation( const vec3 & position, const glm::vec3 & euler )
+{
+	m_Position = position;
+	m_Rotation = Math::EulerToQuat( euler );
+
+	SetDirty( true );
 }
 
 /**	Set Position
 *******************************************************************************/
-void CTransform::SetPosition( const glm::vec3& position )
+void CTransform::SetWorldPosition( const vec3& position )
 {
 	vec3 localPosition = position;
 
-	if (GetParent( ))
-		localPosition = (vec3)(GetParent( )->GetInverseMatrix( ) * vec4( position, 1.f ));
+	if ( GetParent() )
+		localPosition = (vec3)( GetParent()->GetInverseMatrix() * vec4( position, 1.f ) );
 
-	SetLocalPosition( localPosition );
+	SetPosition( localPosition );
 }
 
 /**	Set Scale
 *******************************************************************************/
-void CTransform::SetScale( const glm::vec3& scale )
+void CTransform::SetWorldScale( const vec3& scale )
 {
 }
 
 /**	Set Rotation
 *******************************************************************************/
-void CTransform::SetRotation( const glm::quat& rotation )
+void CTransform::SetWorldRotation( const quat& rotation )
 {
 	quat localRotation = rotation;
 
-	if (GetParent( ))
-		localRotation = inverse( GetParent( )->GetRotation( ) ) * localRotation;
+	if ( GetParent() )
+		localRotation = inverse( GetParent()->GetWorldRotation() ) * localRotation;
 
-	SetLocalRotation( localRotation );
+	SetRotation( localRotation );
 }
 
 /**	Look At
 *******************************************************************************/
-void CTransform::LookAt( const glm::vec3& point, const glm::vec3& up )
+void CTransform::LookAt( const vec3& point, const glm::vec3& up )
 {
 	mat4 target( 1.f );
 
-	vec3 vecforward = normalize( point - GetPosition( ) );
+	vec3 vecforward = normalize( point - GetWorldPosition() );
 	vec3 vecright = normalize( cross( vecforward, up ) );
 	vec3 vecup = cross( vecright, vecforward );
 
@@ -85,39 +151,51 @@ void CTransform::LookAt( const glm::vec3& point, const glm::vec3& up )
 	target[1] = vec4( vecup, 0.f );
 	target[2] = vec4( vecright, 0.f );
 
-	SetRotation( quat( target ) );
+	SetWorldRotation( quat( target ) );
 }
 
 /**	Get Matrix
 *******************************************************************************/
-const glm::mat4& CTransform::GetMatrix( )
+const mat4& CTransform::GetMatrix()
 {
-	Clean( );
+	Clean();
 	return m_Matrix;
 }
 
 /**	Get Local Matrix
 *******************************************************************************/
-const glm::mat4 & CTransform::GetLocalMatrix( )
+const mat4 & CTransform::GetLocalMatrix()
 {
-	Clean( );
+	Clean();
 	return m_LocalMatrix;
 }
 
 /**	Get Inverse Matrix
 *******************************************************************************/
-const glm::mat4& CTransform::GetInverseMatrix( )
+const mat4& CTransform::GetInverseMatrix()
 {
-	Clean( );
+	Clean();
 	return m_InvMatrix;
 }
 
 /**	Get Inverse Local Matrix
 *******************************************************************************/
-const glm::mat4& CTransform::GetInverseLocalMatrix( )
+const mat4& CTransform::GetInverseLocalMatrix()
 {
-	Clean( );
+	Clean();
 	return m_InvLocalMatrix;
+}
+
+/**	Serialize
+*******************************************************************************/
+void CTransform::Serialize( CSerializer& Serializer )
+{
+	Serializer.Serialize( m_Position );
+	Serializer.Serialize( m_Rotation );
+	Serializer.Serialize( m_Scale );
+
+	if ( Serializer.IsWriting() )
+		SetDirty( true );
 }
 
 /**	Set Dirty
@@ -127,16 +205,16 @@ void CTransform::SetDirty( bool local )
 	m_LocalDirty = m_LocalDirty || local;
 	m_WorldDirty = true;
 
-	for (size_t i = 0; i < m_Children.size( ); i++)
-		m_Children[i]->SetDirty( );
+	for ( size_t i = 0; i < m_Children.size(); i++ )
+		m_Children[i]->SetDirty();
 }
 
 /**	Clean
 *******************************************************************************/
-void CTransform::Clean( )
+void CTransform::Clean()
 {
 	//--------------------------------------------------- Local Matrix
-	if (m_LocalDirty)
+	if ( m_LocalDirty )
 	{
 		mat4 scaleMat = scale( mat4( 1.f ), m_Scale );
 
@@ -149,16 +227,16 @@ void CTransform::Clean( )
 	}
 
 	//--------------------------------------------------- World Matrix
-	if (m_WorldDirty)
+	if ( m_WorldDirty )
 	{
-		if (GetParent( ))
+		if ( GetParent() )
 		{
-			m_Matrix = GetParent( )->GetMatrix( ) * m_LocalMatrix;
+			m_Matrix = GetParent()->GetMatrix() * m_LocalMatrix;
 			m_InvMatrix = inverse( m_Matrix );
 
 			m_WorldPosition = (vec3)m_Matrix[3];
-			m_WorldRotation = GetParent( )->GetRotation( ) * m_Rotation;
-			m_WorldScale = GetParent( )->GetScale( ) * m_Scale;
+			m_WorldRotation = GetParent()->GetWorldRotation() * m_Rotation;
+			m_WorldScale = GetParent()->GetWorldScale() * m_Scale;
 		}
 		else
 		{

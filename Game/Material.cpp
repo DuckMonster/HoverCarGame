@@ -1,28 +1,60 @@
 #include "stdafx.h"
 #include "Material.h"
 #include "File.h"
-#include "Log.h"
 #include "GLUtils.h"
+
+#if !defined(GAME_SERVER)
+#define UNIFORM_SET_CPP(type, func, valptr) \
+void CMaterial::Set(const char* uniform, const type* value, size_t count) \
+{ \
+	glUseProgram(m_Program); \
+	GLuint handle = glGetUniformLocation(m_Program, uniform); \
+	\
+	if ( !EnsureMsg(handle != GLuint(-1), "Uniform \"%s\" wasn't found", uniform) ) \
+		return; \
+	\
+	func( handle, count, (valptr*)value);\
+}
+
+#define UNIFORM_SET_MAT_CPP(type, func, valptr) \
+void CMaterial::Set(const char* uniform, const type* value, size_t count) \
+{ \
+	glUseProgram(m_Program); \
+	GLuint handle = glGetUniformLocation(m_Program, uniform); \
+	\
+	if ( !EnsureMsg(handle != GLuint(-1), "Uniform \"%s\" wasn't found", uniform) ) \
+		return; \
+	\
+	func( handle, count, false, (valptr*)value);\
+}
+#else
+#define UNIFORM_SET_CPP(type, func, valptr) \
+void CMaterial::Set(const char* uniform, const type* value, size_t count) {}
+#define UNIFORM_SET_MAT_CPP(type, func, valptr) \
+void CMaterial::Set(const char* uniform, const type* value, size_t count) {}
+#endif
 
 using namespace std;
 
+#if !defined(GAME_SERVER)
 /**	Constructor
 *******************************************************************************/
-CMaterial::CMaterial( )
+CMaterial::CMaterial()
 {
 }
 
 /**	Destructor
 *******************************************************************************/
-CMaterial::~CMaterial( )
+CMaterial::~CMaterial()
 {
+	Unload();
 }
 
 /**	Un-load
 *******************************************************************************/
-void CMaterial::Unload( )
+void CMaterial::Unload()
 {
-	if (m_Program == -1)
+	if ( m_Program == -1 )
 		return;
 
 	glDeleteProgram( m_Program );
@@ -33,7 +65,7 @@ void CMaterial::Unload( )
 *******************************************************************************/
 void CMaterial::LoadSource( const char* vertSrc, const char* fragSrc )
 {
-	Unload( );
+	Unload();
 	m_Program = GLUtils::CreateShaderSrc( vertSrc, fragSrc );
 }
 
@@ -47,7 +79,7 @@ void CMaterial::LoadFromFile( const char* path )
 	vertPath += ".vert";
 	fragPath += ".frag";
 
-	LoadFromFile( vertPath.c_str( ), fragPath.c_str( ) );
+	LoadFromFile( vertPath.c_str(), fragPath.c_str() );
 }
 
 /**	Load Shaders
@@ -56,21 +88,21 @@ void CMaterial::LoadFromFile( const char* vertPath, const char* fragPath )
 {
 	string vertSrc, fragSrc;
 
-	if (!File::ReadFile( vertPath, vertSrc ))
+	if ( EnsureNot( !File::ReadFile( vertPath, vertSrc ) ) )
 	{
-		Print_Log( "Failed to load file \"%s\"", vertPath );
+		Debug_Log( "Failed to load file \"%s\"", vertPath );
 		return;
 	}
 
-	if (!File::ReadFile( fragPath, fragSrc ))
+	if ( EnsureNot( !File::ReadFile( fragPath, fragSrc ) ) )
 	{
-		Print_Log( "Failed to load file \"%s\"", fragPath );
+		Debug_Log( "Failed to load file \"%s\"", fragPath );
 		return;
 	}
 
-	Print_Log( "Loading shader \"%s\" / \"%s\"", File::GetFileFromPath( vertPath ).c_str( ), File::GetFileFromPath( fragPath ).c_str( ) );
+	Debug_Log( "Loading shader \"%s\" / \"%s\"", File::GetFileFromPath( vertPath ).c_str(), File::GetFileFromPath( fragPath ).c_str() );
 
-	LoadSource( vertSrc.c_str( ), fragSrc.c_str( ) );
+	LoadSource( vertSrc.c_str(), fragSrc.c_str() );
 }
 
 /**	Load Texture
@@ -79,3 +111,11 @@ void CMaterial::LoadTexture( const char* path )
 {
 	GLUtils::CreateTextureFromFile( path, m_Texture );
 }
+#endif
+
+UNIFORM_SET_CPP( float, glUniform1fv, float )
+UNIFORM_SET_CPP( glm::vec2, glUniform2fv, float )
+UNIFORM_SET_CPP( glm::vec3, glUniform3fv, float )
+UNIFORM_SET_CPP( glm::vec4, glUniform4fv, float )
+UNIFORM_SET_MAT_CPP( glm::mat4, glUniformMatrix4fv, float )
+UNIFORM_SET_CPP( int, glUniform1iv, int )

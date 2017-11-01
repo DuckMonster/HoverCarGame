@@ -10,7 +10,7 @@ out VS_OUT {
 } vs_out;
 
 void main() {
-	vec4 vert = vec4(a_Position * 5.0, 1.0);
+	vec4 vert = vec4(a_Position * 50.0, 1.0);
 
 	gl_Position = u_Camera * u_Model * vert;
 	vs_out.world = (u_Model * vert).xyz;

@@ -1,0 +1,29 @@
+{
+	"Client": {
+		"Width": 800,
+		"Height": 500
+	},
+
+	"Character": {
+		"Movement": {
+			"Acceleration": 140.0,
+			"Friction": 15.0,
+			"TurnSpeed": 10.0
+		}
+	},
+
+	"Player": {
+		"Camera": {
+			"MoveSpeed": 5.0,
+			"ZoomSpeed": 2.0,
+			"AimDistance": 0.4,
+			"ZoomBase": 12.0,
+			"ZoomDistanceFactor": 0.12
+		}
+	},
+
+	"Projectile": {
+		"Size": 1.5,
+		"Speed": 300.0
+	}
+}

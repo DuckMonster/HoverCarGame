@@ -1,4 +1,7 @@
 #pragma once
+
+// This code rendering-specific, IE client only
+#if !defined(GAME_SERVER)
 class CForward
 {
 public:
@@ -25,3 +28,4 @@ private:
 	GLuint	m_MotionBlurOutTexture;
 	GLuint	m_MotionBlurFrameBuffer;
 };
+#endif

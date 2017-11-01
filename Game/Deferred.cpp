@@ -1,4 +1,6 @@
 #include "stdafx.h"
+
+#if !defined(GAME_SERVER)
 #include "Deferred.h"
 #include "GLUtils.h"
 #include "Actor.h"
@@ -51,10 +53,10 @@ void CDeferred::RenderScene( CScene* scene )
 	GLint Viewport[4];
 	glGetIntegerv( GL_VIEWPORT, Viewport );
 
-
 	GBufferPass( scene );
 	ShadowPass( scene );
 	LightPass( scene );
+	ForwardPass( scene );
 
 	//--------------------------------------------------- Reset
 	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
@@ -83,6 +85,7 @@ void CDeferred::GBufferPass( CScene * scene )
 
 	SRenderInfo info;
 	info.CameraMatrix = camera->GetMatrix( );
+	info.Phase = RenderPhase::Deferred;
 
 	m_ViewInv = inverse( camera->GetView( ) );
 	m_ProjInv = inverse( camera->GetProjection( ) );
@@ -109,28 +112,27 @@ void CDeferred::ShadowPass( CScene* scene )
 	CDirectionalLight* light = scene->GetRootActor( )->FindComponent<CDirectionalLight>( );
 	if (!light)
 	{
-		Print_Log( "No directional light in scene" );
+		Debug_Log( "No directional light in scene" );
 		return;
 	}
 
-	vec3 position = light->Transform( )->GetPosition( ),
+	vec3 position = light->Transform( )->GetWorldPosition( ),
 		forward = light->Transform( )->GetForward( ),
 		up = light->Transform( )->GetUp( );
 
 	mat4 view = lookAt( position, position + forward, up ),
-		proj = ortho( -10.f, 10.f, -10.f, 10.f, -10.f, 20.f );
+		proj = ortho( -50.f, 50.f, -50.f, 50.f, -50.f, 50.f );
 
 	m_LightSpace = proj * view;
 
 	SRenderInfo info;
 	info.CameraMatrix = proj * view;
-	info.UseShaderOverride = true;
-	info.ShaderOverride = m_ShadowPass.Shader;
+	info.Phase = RenderPhase::Shadow;
 
 	glBindFramebuffer( GL_FRAMEBUFFER, m_ShadowPass.Framebuffer );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	glEnable( GL_DEPTH_TEST );
-	glViewport( 0, 0, 2048, 2048 );
+	glViewport( 0, 0, 4096, 4096);
 
 	scene->GetRootActor( )->Render( info );
 
@@ -144,7 +146,7 @@ void CDeferred::LightPass( CScene* scene )
 	CDirectionalLight* light = scene->GetRootActor( )->FindComponent<CDirectionalLight>( );
 	if (!light)
 	{
-		Print_Log( "No directional light in scene" );
+		Debug_Log( "No directional light in scene" );
 		return;
 	}
 
@@ -170,6 +172,31 @@ void CDeferred::LightPass( CScene* scene )
 
 	glViewport( 0, 0, m_Width, m_Height );
 	glDrawArrays( GL_QUADS, 0, 4 );
+}
+
+/**	Forward Pass
+*******************************************************************************/
+void CDeferred::ForwardPass( CScene* scene )
+{
+	CCamera* camera = scene->GetActiveCamera( );
+	float aspect = (float)m_Width / m_Height;
+	camera->SetAspect( aspect );
+
+	SRenderInfo info;
+	info.CameraMatrix = camera->GetMatrix( );
+	info.Phase = RenderPhase::Forward;
+
+	glBindFramebuffer( GL_FRAMEBUFFER, m_ForwardPass.Framebuffer );
+	glEnable( GL_BLEND );
+	glEnable( GL_DEPTH_TEST );
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
+	glViewport( 0, 0, m_Width, m_Height );
+
+	scene->GetRootActor( )->Render( info );
+
+	glDisable( GL_BLEND );
+	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 }
 
 /**	Init GBuffer
@@ -210,10 +237,7 @@ void CDeferred::InitGBuffer( )
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_Width, m_Height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr );
 	glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_GBuffer.Depth, 0 );
 
-	if (glCheckFramebufferStatus( GL_FRAMEBUFFER ) != GL_FRAMEBUFFER_COMPLETE)
-		Print_Log( "Deferred framebuffer not complete!" );
-	else
-		Print_Log( "GBuffer initialized successfully!" );
+	EnsureMsg( glCheckFramebufferStatus( GL_FRAMEBUFFER ) == GL_FRAMEBUFFER_COMPLETE, "Deferred GBuffer not complete!" );
 
 	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 
@@ -230,14 +254,11 @@ void CDeferred::InitGBuffer( )
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 2048, 2048, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr );
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 4096, 4096, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr );
 
 	glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_ShadowPass.Texture, 0 );
 
-	if (glCheckFramebufferStatus( GL_FRAMEBUFFER ) != GL_FRAMEBUFFER_COMPLETE)
-		Print_Log( "Deferred Shadow Pass not complete!" );
-	else
-		Print_Log( "Deferred Shadow Pass initialized successfully!" );
+	EnsureMsg( glCheckFramebufferStatus( GL_FRAMEBUFFER ) == GL_FRAMEBUFFER_COMPLETE, "Shadow Pass not complete!" );
 
 	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 
@@ -260,17 +281,36 @@ void CDeferred::InitGBuffer( )
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr );
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr );
 
 	glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_LightPass.Texture, 0 );
 
-	if (glCheckFramebufferStatus( GL_FRAMEBUFFER ) != GL_FRAMEBUFFER_COMPLETE)
-		Print_Log( "Deferred Light Pass not complete!" );
-	else
-		Print_Log( "Deferred Light Pass initialized successfully!" );
+	EnsureMsg( glCheckFramebufferStatus( GL_FRAMEBUFFER ) == GL_FRAMEBUFFER_COMPLETE, "Light Pass not complete!" );
 
 	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 
+	//--------------------------------------------------- Forward Pass
+	glGenTextures( 1, &m_ForwardPass.Texture );
+	glGenFramebuffers( 1, &m_ForwardPass.Framebuffer );
+
+	// Setup framebuffer
+	glBindFramebuffer( GL_FRAMEBUFFER, m_ForwardPass.Framebuffer );
+
+	glBindTexture( GL_TEXTURE_2D, m_ForwardPass.Texture );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr );
+
+	glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_LightPass.Texture , 0 );
+	glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_GBuffer.Depth, 0 );
+
+	EnsureMsg( glCheckFramebufferStatus( GL_FRAMEBUFFER ) == GL_FRAMEBUFFER_COMPLETE, "Forward Pass not complete!" );
+
+	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+
+	//--------------------------------------------------- All done
 	m_GBufferValid = true;
 }
 
@@ -299,3 +339,4 @@ void CDeferred::Recompile( )
 	GLUtils::SetShaderUniform( m_LightPass.Shader, "u_Deferred.Depth", 2 );
 	GLUtils::SetShaderUniform( m_LightPass.Shader, "u_Deferred.Shadow", 3 );
 }
+#endif
